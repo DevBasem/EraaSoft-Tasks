@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EraaSoft-Task1.Net", "EraaS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EraaSoft-Task1-Search.Net", "EraaSoft-Task1-Search.Net\EraaSoft-Task1-Search.Net.csproj", "{68CEDA1D-1CD4-4971-B573-88C4BA9A8960}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eraasoft-Task2.Net", "Eraasoft-Task2.Net\Eraasoft-Task2.Net.csproj", "{1D5AECD7-2CDB-4A85-96FE-BEA974659FB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{68CEDA1D-1CD4-4971-B573-88C4BA9A8960}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68CEDA1D-1CD4-4971-B573-88C4BA9A8960}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68CEDA1D-1CD4-4971-B573-88C4BA9A8960}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D5AECD7-2CDB-4A85-96FE-BEA974659FB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D5AECD7-2CDB-4A85-96FE-BEA974659FB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D5AECD7-2CDB-4A85-96FE-BEA974659FB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D5AECD7-2CDB-4A85-96FE-BEA974659FB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
