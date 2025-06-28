@@ -1,0 +1,43 @@
+challenge 1 (mapping) :
+Musician(ID, Name, phone, street, city, AlbumId)
+
+Instrument(Name, Key) 
+
+MusicianInstruments(MusicianId, InstrumentName)
+
+Song(Title, Author, AlbumId)
+
+MusicianSongs(MusicianId, SongTitle)
+
+Album(Id, Date, Title, MusicianId)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+challenge 2 (mapping) :
+Employee(ID, Name, SalesOfficeNum)
+
+SalesOffice(Num, Loc)
+
+Property(ID, Add, City, State, Zip, SalesOfficeNum)
+
+Owner(ID, Name)
+
+PropertyOwner(PropertyID, OwnerID, PercentOwned)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+challenge 3 (mapping) :
+Patient(ID, Name, DOB, Ward_ID, Consultant_ID)
+
+Consultant(ID, Name)
+
+Ward(ID, Name)
+
+Nurse(ID, Name, Ward_ID)
+
+Drug(Code, Rec_Dosage)
+
+DrugBrand(Code, Brand)
+
+PatientDrugs(Patient_ID, DrugCode, Date, Time, Dosage)
+
+PatientConsultants(Patient_ID, Consultant_ID)
+
