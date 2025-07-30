@@ -12,8 +12,8 @@ using P01_StudentSystem.Data;
 namespace Task9.Migrations
 {
     [DbContext(typeof(BikeStoresDbContext))]
-    [Migration("20250729202348_intial-create")]
-    partial class intialcreate
+    [Migration("20250730143837_Intial-Create")]
+    partial class IntialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
