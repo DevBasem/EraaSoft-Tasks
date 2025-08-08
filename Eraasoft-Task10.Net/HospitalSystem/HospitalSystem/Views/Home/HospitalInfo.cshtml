@@ -1,0 +1,90 @@
+@model HospitalSystem.ViewModels.HospitalInfoVM
+
+@{
+    ViewData["Title"] = "Hospital Information";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4 text-center">@ViewData["Title"]</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-hospital me-2"></i>
+                        @Model.Name
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="text-primary">General Information</h5>
+                            <p><strong>Established:</strong> @Model.EstablishedYear</p>
+                            <p><strong>Address:</strong> @Model.Address</p>
+                            <p><strong>Contact:</strong> @Model.ContactPhone</p>
+                            <p><strong>Total Beds:</strong> @Model.TotalBeds</p>
+                            <p><strong>Total Staff:</strong> @Model.TotalStaff</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-primary">Accreditation Status</h5>
+                            @if (Model.IsAccredited)
+                            {
+                                <span class="badge bg-success fs-6 mb-3">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    Fully Accredited
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning fs-6 mb-3">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Accreditation Pending
+                                </span>
+                            }
+                            <p class="text-muted">We maintain the highest standards of healthcare quality and safety.</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="text-primary mb-3">Medical Departments</h5>
+                            <div class="row">
+                                @foreach (var department in Model.Departments)
+                                {
+                                    <div class="col-md-6 mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-medical-kit text-primary me-2"></i>
+                                            <span>@department</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12 text-center">
+                            <a asp-controller="Doctors" asp-action="Index" class="btn btn-primary btn-lg me-3">
+                                <i class="fas fa-calendar-plus me-2"></i>
+                                Book Appointment
+                            </a>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-home me-2"></i>
+                                Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+}

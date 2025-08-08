@@ -1,0 +1,266 @@
+﻿@model HospitalSystem.ViewModels.HomePageVM
+
+@{
+    ViewData["Title"] = "Welcome to MediCare Hospital";
+}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content fade-in">
+                    <h1 class="hero-title">@Model.WelcomeMessage</h1>
+                    <p class="hero-subtitle">Experience world-class healthcare with our expert medical professionals and state-of-the-art facilities. Your health and well-being are our top priority.</p>
+                    <div class="hero-actions">
+                        <a asp-controller="Doctors" asp-action="Index" class="btn btn-cta btn-lg me-3">
+                            <i class="fas fa-calendar-plus me-2"></i>
+                            Book Appointment
+                        </a>
+                        <a href="#services" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image text-center">
+                    <i class="fas fa-hospital-alt" style="font-size: 12rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card primary slide-up">
+                    <div class="stat-number">@Model.TotalDoctors</div>
+                    <div class="stat-label">Expert Doctors</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card success slide-up">
+                    <div class="stat-number">@Model.TotalPatients</div>
+                    <div class="stat-label">Happy Patients</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card info slide-up">
+                    <div class="stat-number">@Model.TotalAppointments</div>
+                    <div class="stat-label">Total Appointments</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card warning slide-up">
+                    <div class="stat-number">@Model.Services.Count</div>
+                    <div class="stat-label">Medical Services</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="container mt-5 pt-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="section-title">Our Healthcare Services</h2>
+            <p class="section-subtitle">Comprehensive medical care tailored to your needs</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+            <div class="service-card">
+                <div class="service-icon primary">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <h5 class="service-title">Expert Doctors</h5>
+                <p class="service-description">Our team of qualified and experienced doctors are here to provide you with the best medical care using the latest treatment methods.</p>
+                <a asp-controller="Doctors" asp-action="Index" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-1"></i>
+                    View Our Doctors
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+            <div class="service-card">
+                <div class="service-icon success">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h5 class="service-title">Easy Online Booking</h5>
+                <p class="service-description">Book your appointment online with just a few clicks. Choose your preferred doctor, date, and time slot that works best for you.</p>
+                <a asp-controller="Doctors" asp-action="Index" class="btn btn-success">
+                    <i class="fas fa-plus me-1"></i>
+                    Book Appointment
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+            <div class="service-card">
+                <div class="service-icon info">
+                    <i class="fas fa-hospital"></i>
+                </div>
+                <h5 class="service-title">Advanced Healthcare</h5>
+                <p class="service-description">We provide comprehensive healthcare services with state-of-the-art facilities, modern equipment, and innovative treatment approaches.</p>
+                <a href="#contact" class="btn btn-info">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (Model.FeaturedDoctors.Any())
+{
+    <section class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Meet Our Featured Doctors</h2>
+                <p class="section-subtitle">Experienced medical professionals dedicated to your health</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            @foreach (var doctor in Model.FeaturedDoctors)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="doctor-card">
+                        @if (!string.IsNullOrEmpty(doctor.Img))
+                        {
+                            <img src="~/images/@doctor.Img" alt="Dr. @doctor.Name" class="doctor-avatar" />
+                        }
+                        else
+                        {
+                            <div class="doctor-placeholder">
+                                <i class="fas fa-user-md text-white" style="font-size: 2.5rem;"></i>
+                            </div>
+                        }
+                        <h6 class="doctor-name">Dr. @doctor.Name</h6>
+                        <p class="doctor-specialty">@doctor.Specialization</p>
+                        <a asp-controller="Doctors" asp-action="BookAppointment" asp-route-id="@doctor.Id" class="btn btn-outline-primary">
+                            <i class="fas fa-calendar-plus me-1"></i>
+                            Book Appointment
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+<!-- Features Section -->
+<section class="container">
+    <div class="features-section">
+        <h2 class="features-title">Why Choose MediCare Hospital?</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <ul class="feature-list">
+                    @for (int i = 0; i < Model.HospitalFeatures.Count / 2; i++)
+                    {
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>@Model.HospitalFeatures[i]</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <ul class="feature-list">
+                    @for (int i = Model.HospitalFeatures.Count / 2; i < Model.HospitalFeatures.Count; i++)
+                    {
+                        <li class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>@Model.HospitalFeatures[i]</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Medical Services Grid -->
+<section id="services" class="services-grid-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Comprehensive Medical Services</h2>
+                <p class="section-subtitle">Full spectrum of healthcare services under one roof</p>
+            </div>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            @{
+                var serviceIcons = new string[] { 
+                    "fas fa-stethoscope", "fas fa-heartbeat", "fas fa-user-md", "fas fa-pills", 
+                    "fas fa-x-ray", "fas fa-microscope", "fas fa-ambulance", "fas fa-hospital",
+                    "fas fa-syringe", "fas fa-dna", "fas fa-brain", "fas fa-eye",
+                    "fas fa-tooth", "fas fa-bone", "fas fa-lungs", "fas fa-heart-pulse"
+                };
+                var serviceColors = new string[] { "primary", "success", "info", "warning" };
+            }
+            
+            @for (int i = 0; i < Model.Services.Count; i++)
+            {
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                    <div class="service-item">
+                        <div class="service-icon-wrapper @serviceColors[i % 4]">
+                            <i class="@(serviceIcons[i % serviceIcons.Length])"></i>
+                        </div>
+                        <h6 class="service-name">@Model.Services[i]</h6>
+                        <div class="service-description">
+                            Professional medical care with latest technology
+                        </div>
+                        <div class="service-badge">
+                            <span class="badge bg-light text-primary">Available 24/7</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="container mt-5 pt-5" id="contact">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center p-5" style="background: var(--gradient-primary); border-radius: var(--border-radius); color: white;">
+                <h2 class="mb-3">Ready to Take Care of Your Health?</h2>
+                <p class="lead mb-4">Don't wait - book your appointment today and experience the best in healthcare.</p>
+                <a asp-controller="Doctors" asp-action="Index" class="btn btn-cta btn-lg">
+                    <i class="fas fa-phone-alt me-2"></i>
+                    Book Your Appointment Now
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // Add fade-in animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.service-card, .doctor-card, .service-item').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+}
