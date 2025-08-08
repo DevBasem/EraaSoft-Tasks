@@ -52,8 +52,8 @@ namespace HospitalSystem.Controllers
                 DoctorName = doctor.Name,
                 DoctorSpecialization = doctor.Specialization,
                 DoctorImg = doctor.Img,
-                AppointmentDate = DateOnly.FromDateTime(DateTime.Today),
-                AppointmentTime = new TimeOnly(9, 0), // Default to 9 AM
+                AppointmentDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1)), // Default to tomorrow
+                AppointmentTime = "", // Empty by default, user must select
                 PatientName = "",
                 PatientAge = 0,
                 PatientGender = "",
@@ -66,10 +66,73 @@ namespace HospitalSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> BookAppointment(BookAppointmentVM bookAppointmentVM)
         {
+            // Custom validation for weekend appointments
+            var appointmentDate = bookAppointmentVM.AppointmentDate.ToDateTime(TimeOnly.MinValue);
+            var dayOfWeek = appointmentDate.DayOfWeek;
+            
+            if (dayOfWeek == DayOfWeek.Friday || dayOfWeek == DayOfWeek.Saturday)
+            {
+                ModelState.AddModelError("AppointmentDate", "We are closed on Fridays and Saturdays. Please select another date.");
+            }
+
+            // Validate appointment date is not in the past
+            if (bookAppointmentVM.AppointmentDate < DateOnly.FromDateTime(DateTime.Today))
+            {
+                ModelState.AddModelError("AppointmentDate", "Appointment date cannot be in the past.");
+            }
+
+            // Validate appointment time format and range
+            if (!string.IsNullOrEmpty(bookAppointmentVM.AppointmentTime))
+            {
+                if (!TimeOnly.TryParse(bookAppointmentVM.AppointmentTime, out var parsedTime))
+                {
+                    ModelState.AddModelError("AppointmentTime", "Invalid time format.");
+                }
+                else
+                {
+                    // Check if time is within business hours (9 AM to 5 PM)
+                    var startTime = new TimeOnly(9, 0);
+                    var endTime = new TimeOnly(17, 0);
+                    
+                    if (parsedTime < startTime || parsedTime > endTime)
+                    {
+                        ModelState.AddModelError("AppointmentTime", "Appointment time must be between 9:00 AM and 5:00 PM.");
+                    }
+
+                    // If appointment is today, check if time is not in the past
+                    if (bookAppointmentVM.AppointmentDate == DateOnly.FromDateTime(DateTime.Today))
+                    {
+                        var currentTime = TimeOnly.FromDateTime(DateTime.Now);
+                        if (parsedTime <= currentTime.AddMinutes(30)) // 30 minutes buffer
+                        {
+                            ModelState.AddModelError("AppointmentTime", "Please select a time at least 30 minutes from now.");
+                        }
+                    }
+                }
+            }
+
+            // Check for duplicate appointments (same doctor, date, and time)
+            if (!string.IsNullOrEmpty(bookAppointmentVM.AppointmentTime) && 
+                TimeOnly.TryParse(bookAppointmentVM.AppointmentTime, out var timeToCheck))
+            {
+                var existingAppointment = await _context.Appointments
+                    .FirstOrDefaultAsync(a => a.DoctorId == bookAppointmentVM.DoctorId && 
+                                            a.Date == bookAppointmentVM.AppointmentDate && 
+                                            a.Time == timeToCheck);
+                
+                if (existingAppointment != null)
+                {
+                    ModelState.AddModelError("AppointmentTime", "This time slot is already booked. Please select another time.");
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(bookAppointmentVM);
             }
+
+            // Parse the time string to TimeOnly for database storage
+            var appointmentTime = TimeOnly.Parse(bookAppointmentVM.AppointmentTime);
 
             // Create or find patient
             var patient = new Patient
@@ -87,7 +150,7 @@ namespace HospitalSystem.Controllers
             var appointment = new Appointment
             {
                 Date = bookAppointmentVM.AppointmentDate,
-                Time = bookAppointmentVM.AppointmentTime,
+                Time = appointmentTime,
                 DoctorId = bookAppointmentVM.DoctorId,
                 PatientId = patient.Id
             };
@@ -95,7 +158,7 @@ namespace HospitalSystem.Controllers
             _context.Appointments.Add(appointment);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Appointment booked successfully!";
+            TempData["SuccessMessage"] = $"Appointment booked successfully for {bookAppointmentVM.AppointmentDate:MMMM dd, yyyy} at {appointmentTime:hh:mm tt}!";
             return RedirectToAction("Index");
         }
 
