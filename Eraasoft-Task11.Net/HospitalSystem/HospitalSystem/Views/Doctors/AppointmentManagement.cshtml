@@ -1,0 +1,564 @@
+@model HospitalSystem.ViewModels.AppointmentManagementVM
+
+@{
+    ViewData["Title"] = "Appointment Management";
+}
+
+<!-- Page Header Section -->
+<section class="hero-section" style="padding: 60px 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="hero-title" style="font-size: 2.5rem;">@ViewData["Title"]</h1>
+                <p class="hero-subtitle">Manage and view all appointments in the hospital system</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container mt-5">
+    
+    <!-- Success/Error Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    }
+    
+    <!-- Summary Cards -->
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="summary-card today">
+                <div class="card-icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="card-content">
+                    <h3>@Model.TotalAppointmentsToday</h3>
+                    <p>Today's Appointments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-card upcoming">
+                <div class="card-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="card-content">
+                    <h3>@Model.TotalUpcomingAppointments</h3>
+                    <p>Upcoming Appointments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-card total">
+                <div class="card-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="card-content">
+                    <h3>@(Model.TotalAppointmentsToday + Model.TotalUpcomingAppointments + Model.PastAppointments.Count)</h3>
+                    <p>Total Appointments</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointments Tabs -->
+    <div class="appointments-tabs">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-today-tab" data-bs-toggle="tab" data-bs-target="#nav-today" 
+                        type="button" role="tab" aria-controls="nav-today" aria-selected="true">
+                    <i class="fas fa-calendar-day me-2"></i>Today's Appointments (@Model.TotalAppointmentsToday)
+                </button>
+                <button class="nav-link" id="nav-upcoming-tab" data-bs-toggle="tab" data-bs-target="#nav-upcoming" 
+                        type="button" role="tab" aria-controls="nav-upcoming" aria-selected="false">
+                    <i class="fas fa-calendar-alt me-2"></i>Upcoming (@Model.TotalUpcomingAppointments)
+                </button>
+                <button class="nav-link" id="nav-past-tab" data-bs-toggle="tab" data-bs-target="#nav-past" 
+                        type="button" role="tab" aria-controls="nav-past" aria-selected="false">
+                    <i class="fas fa-history me-2"></i>Past Appointments (@Model.PastAppointments.Count)
+                </button>
+            </div>
+        </nav>
+        
+        <div class="tab-content" id="nav-tabContent">
+            
+            <!-- Today's Appointments -->
+            <div class="tab-pane fade show active" id="nav-today" role="tabpanel" aria-labelledby="nav-today-tab">
+                <div class="appointments-container">
+                    @if (Model.TodayAppointments.Any())
+                    {
+                        <div class="row">
+                            @foreach (var appointment in Model.TodayAppointments.OrderBy(a => a.Time))
+                            {
+                                <div class="col-lg-6 mb-4">
+                                    <div class="appointment-card today">
+                                        <div class="appointment-header">
+                                            <div class="appointment-status">
+                                                <span class="status-badge today">@appointment.Status</span>
+                                            </div>
+                                            <div class="appointment-actions">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                        onclick="cancelAppointment(@appointment.Id, '@appointment.PatientName', '@appointment.Date.ToString("MM/dd/yyyy")', '@appointment.Time.ToString("hh:mm tt")')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="appointment-body">
+                                            <div class="appointment-time">
+                                                <i class="fas fa-clock"></i>
+                                                <span>@appointment.Time.ToString("hh:mm tt")</span>
+                                            </div>
+                                            <div class="appointment-patient">
+                                                <h5>@appointment.PatientName</h5>
+                                                <p>@appointment.PatientAge years old, @appointment.PatientGender</p>
+                                            </div>
+                                            <div class="appointment-doctor">
+                                                <span class="doctor-badge">
+                                                    <i class="fas fa-user-md"></i>
+                                                    Dr. @appointment.DoctorName - @appointment.DoctorSpecialization
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <h4>No appointments for today</h4>
+                            <p>All clear for today! No scheduled appointments.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Upcoming Appointments -->
+            <div class="tab-pane fade" id="nav-upcoming" role="tabpanel" aria-labelledby="nav-upcoming-tab">
+                <div class="appointments-container">
+                    @if (Model.UpcomingAppointments.Any())
+                    {
+                        <div class="row">
+                            @foreach (var appointment in Model.UpcomingAppointments.OrderBy(a => a.Date).ThenBy(a => a.Time))
+                            {
+                                <div class="col-lg-6 mb-4">
+                                    <div class="appointment-card upcoming">
+                                        <div class="appointment-header">
+                                            <div class="appointment-status">
+                                                <span class="status-badge upcoming">@appointment.Status</span>
+                                            </div>
+                                            <div class="appointment-actions">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                        onclick="cancelAppointment(@appointment.Id, '@appointment.PatientName', '@appointment.Date.ToString("MM/dd/yyyy")', '@appointment.Time.ToString("hh:mm tt")')">
+                                                    <i class="fas fa-times"></i> Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="appointment-body">
+                                            <div class="appointment-date">
+                                                <i class="fas fa-calendar"></i>
+                                                <span>@appointment.Date.ToString("MMMM dd, yyyy")</span>
+                                            </div>
+                                            <div class="appointment-time">
+                                                <i class="fas fa-clock"></i>
+                                                <span>@appointment.Time.ToString("hh:mm tt")</span>
+                                            </div>
+                                            <div class="appointment-patient">
+                                                <h5>@appointment.PatientName</h5>
+                                                <p>@appointment.PatientAge years old, @appointment.PatientGender</p>
+                                            </div>
+                                            <div class="appointment-doctor">
+                                                <span class="doctor-badge">
+                                                    <i class="fas fa-user-md"></i>
+                                                    Dr. @appointment.DoctorName - @appointment.DoctorSpecialization
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h4>No upcoming appointments</h4>
+                            <p>No future appointments scheduled at this time.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Past Appointments -->
+            <div class="tab-pane fade" id="nav-past" role="tabpanel" aria-labelledby="nav-past-tab">
+                <div class="appointments-container">
+                    @if (Model.PastAppointments.Any())
+                    {
+                        <div class="row">
+                            @foreach (var appointment in Model.PastAppointments.OrderByDescending(a => a.Date).ThenByDescending(a => a.Time))
+                            {
+                                <div class="col-lg-6 mb-4">
+                                    <div class="appointment-card past">
+                                        <div class="appointment-header">
+                                            <div class="appointment-status">
+                                                <span class="status-badge completed">@appointment.Status</span>
+                                            </div>
+                                        </div>
+                                        <div class="appointment-body">
+                                            <div class="appointment-date">
+                                                <i class="fas fa-calendar"></i>
+                                                <span>@appointment.Date.ToString("MMMM dd, yyyy")</span>
+                                            </div>
+                                            <div class="appointment-time">
+                                                <i class="fas fa-clock"></i>
+                                                <span>@appointment.Time.ToString("hh:mm tt")</span>
+                                            </div>
+                                            <div class="appointment-patient">
+                                                <h5>@appointment.PatientName</h5>
+                                                <p>@appointment.PatientAge years old, @appointment.PatientGender</p>
+                                            </div>
+                                            <div class="appointment-doctor">
+                                                <span class="doctor-badge">
+                                                    <i class="fas fa-user-md"></i>
+                                                    Dr. @appointment.DoctorName - @appointment.DoctorSpecialization
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h4>No past appointments</h4>
+                            <p>No previous appointment records found.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <a asp-action="Index" class="btn btn-primary btn-lg">
+                <i class="fas fa-arrow-left me-2"></i>
+                Back to Doctors
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Appointment Modal -->
+<div class="modal fade" id="cancelAppointmentModal" tabindex="-1" aria-labelledby="cancelAppointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelAppointmentModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Cancel Appointment
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this appointment?</p>
+                <div class="appointment-details">
+                    <div><strong>Patient:</strong> <span id="cancelPatientName"></span></div>
+                    <div><strong>Date:</strong> <span id="cancelDate"></span></div>
+                    <div><strong>Time:</strong> <span id="cancelTime"></span></div>
+                </div>
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    This action cannot be undone. The doctor will become available at this time slot.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep Appointment</button>
+                <button type="button" class="btn btn-danger" id="confirmCancelBtn">
+                    <i class="fas fa-times me-2"></i>
+                    Cancel Appointment
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .summary-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 25px;
+        color: white;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .summary-card.today {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    }
+
+    .summary-card.upcoming {
+        background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    }
+
+    .summary-card.total {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .summary-card .card-icon {
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .summary-card h3 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .summary-card p {
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    .appointments-tabs .nav-tabs {
+        border: none;
+        margin-bottom: 30px;
+    }
+
+    .appointments-tabs .nav-link {
+        border: none;
+        border-radius: 25px;
+        padding: 12px 25px;
+        margin-right: 10px;
+        background-color: #f8f9fa;
+        color: #6c757d;
+        transition: all 0.3s ease;
+    }
+
+    .appointments-tabs .nav-link.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .appointment-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .appointment-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .appointment-card.today {
+        border-left: 5px solid #ff6b6b;
+    }
+
+    .appointment-card.upcoming {
+        border-left: 5px solid #4ecdc4;
+    }
+
+    .appointment-card.past {
+        border-left: 5px solid #95a5a6;
+        opacity: 0.8;
+    }
+
+    .appointment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px 10px;
+    }
+
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .status-badge.today {
+        background-color: #ff6b6b;
+        color: white;
+    }
+
+    .status-badge.upcoming {
+        background-color: #4ecdc4;
+        color: white;
+    }
+
+    .status-badge.completed {
+        background-color: #95a5a6;
+        color: white;
+    }
+
+    .appointment-body {
+        padding: 0 20px 20px;
+    }
+
+    .appointment-date, .appointment-time {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        color: #6c757d;
+    }
+
+    .appointment-date i, .appointment-time i {
+        margin-right: 8px;
+        width: 20px;
+    }
+
+    .appointment-patient h5 {
+        margin: 15px 0 5px;
+        color: #2c3e50;
+    }
+
+    .appointment-patient p {
+        color: #6c757d;
+        margin: 0;
+    }
+
+    .doctor-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-top: 15px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6c757d;
+    }
+
+    .empty-state .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-state h4 {
+        margin-bottom: 10px;
+        color: #495057;
+    }
+
+    .appointment-details {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+    }
+
+    .appointment-details div {
+        margin-bottom: 8px;
+    }
+
+    .appointment-details div:last-child {
+        margin-bottom: 0;
+    }
+
+    @@media (max-width: 768px) {
+        .appointments-tabs .nav-link {
+            margin-bottom: 10px;
+            margin-right: 0;
+        }
+
+        .summary-card {
+            margin-bottom: 15px;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        let appointmentToCancel = null;
+
+        function cancelAppointment(appointmentId, patientName, date, time) {
+            appointmentToCancel = appointmentId;
+            document.getElementById('cancelPatientName').textContent = patientName;
+            document.getElementById('cancelDate').textContent = date;
+            document.getElementById('cancelTime').textContent = time;
+            
+            const modal = new bootstrap.Modal(document.getElementById('cancelAppointmentModal'));
+            modal.show();
+        }
+
+        document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+            if (appointmentToCancel) {
+                // Create a form to submit the cancellation
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '@Url.Action("CancelAppointment", "Doctors")';
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'appointmentId';
+                input.value = appointmentToCancel;
+                
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+
+        // Add loading animation to cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.appointment-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+}

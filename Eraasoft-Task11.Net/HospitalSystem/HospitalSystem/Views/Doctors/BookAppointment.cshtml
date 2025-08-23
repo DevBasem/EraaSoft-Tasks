@@ -1,0 +1,431 @@
+@model HospitalSystem.ViewModels.BookAppointmentVM
+
+@{
+    ViewData["Title"] = "Book Your Appointment";
+}
+
+<!-- Page Header Section -->
+<section class="hero-section" style="padding: 60px 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="hero-title" style="font-size: 2.5rem;">@ViewData["Title"]</h1>
+                <p class="hero-subtitle">Schedule your consultation with our expert medical professionals</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container mt-5">
+    <!-- Doctor Information Card -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+            <div class="doctor-info-card">
+                <div class="doctor-info-header">
+                    <div class="doctor-avatar-section">
+                        @if (!string.IsNullOrEmpty(Model.DoctorImg))
+                        {
+                            <img src="~/images/@Model.DoctorImg" alt="@Model.DoctorName" class="doctor-avatar-large" />
+                        }
+                        else
+                        {
+                            <div class="doctor-placeholder-large">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                        }
+                        <div class="doctor-status-badge">
+                            <i class="fas fa-circle"></i>
+                            Available
+                        </div>
+                    </div>
+                    <div class="doctor-details">
+                        <h2 class="doctor-name-large">Dr. @Model.DoctorName</h2>
+                        <div class="doctor-specialty-large">
+                            <i class="fas fa-stethoscope me-2"></i>
+                            @Model.DoctorSpecialization
+                        </div>
+                        <div class="doctor-credentials">
+                            <div class="credential-item">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>Expert in @Model.DoctorSpecialization</span>
+                            </div>
+                            <div class="credential-item">
+                                <i class="fas fa-award"></i>
+                                <span>Years of Experience</span>
+                            </div>
+                            <div class="credential-item">
+                                <i class="fas fa-users"></i>
+                                <span>Trusted by Thousands</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="appointment-form-card">
+                <div class="form-header">
+                    <div class="form-icon">
+                        <i class="fas fa-calendar-plus"></i>
+                    </div>
+                    <h3>Schedule Your Appointment</h3>
+                    <p>Please provide your details and preferred appointment time</p>
+                </div>
+
+                <form asp-action="BookAppointment" method="post" class="appointment-form" id="appointmentForm">
+                    <input asp-for="DoctorId" type="hidden" />
+                    <input asp-for="DoctorName" type="hidden" />
+                    <input asp-for="DoctorSpecialization" type="hidden" />
+                    <input asp-for="DoctorImg" type="hidden" />
+                    
+                    <!-- Appointment Details Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h4><i class="fas fa-calendar-alt me-2"></i>Appointment Details</h4>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="form-group-enhanced">
+                                    <label asp-for="AppointmentDate" class="form-label-enhanced">
+                                        <i class="fas fa-calendar me-2"></i>Appointment Date
+                                    </label>
+                                    <input asp-for="AppointmentDate" type="date" class="form-control-enhanced" required min="@DateTime.Today.ToString("yyyy-MM-dd")" id="appointmentDate" />
+                                    <span asp-validation-for="AppointmentDate" class="validation-error"></span>
+                                    <div class="form-help">We're closed on Fridays and Saturdays</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-enhanced">
+                                    <label asp-for="AppointmentTime" class="form-label-enhanced">
+                                        <i class="fas fa-clock me-2"></i>Preferred Time
+                                    </label>
+                                    <select asp-for="AppointmentTime" class="form-control-enhanced" required id="appointmentTime">
+                                        <option value="">Select a date first</option>
+                                    </select>
+                                    <span asp-validation-for="AppointmentTime" class="validation-error"></span>
+                                    <div class="form-help" id="timeSlotHelp">Available slots will appear after selecting a date</div>
+                                    <div id="timeSlotLoader" class="d-none">
+                                        <i class="fas fa-spinner fa-spin me-2"></i>Loading available times...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Patient Information Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h4><i class="fas fa-user me-2"></i>Patient Information</h4>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="form-group-enhanced">
+                                    <label asp-for="PatientName" class="form-label-enhanced">
+                                        <i class="fas fa-user me-2"></i>Full Name
+                                    </label>
+                                    <input asp-for="PatientName" type="text" class="form-control-enhanced" required placeholder="Enter your full name" />
+                                    <span asp-validation-for="PatientName" class="validation-error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group-enhanced">
+                                    <label asp-for="PatientAge" class="form-label-enhanced">
+                                        <i class="fas fa-birthday-cake me-2"></i>Age
+                                    </label>
+                                    <input asp-for="PatientAge" type="number" class="form-control-enhanced" required min="1" max="120" placeholder="Age" />
+                                    <span asp-validation-for="PatientAge" class="validation-error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group-enhanced">
+                                    <label asp-for="PatientGender" class="form-label-enhanced">
+                                        <i class="fas fa-venus-mars me-2"></i>Gender
+                                    </label>
+                                    <select asp-for="PatientGender" class="form-control-enhanced" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <span asp-validation-for="PatientGender" class="validation-error"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="form-group-enhanced">
+                                    <label asp-for="PatientAddress" class="form-label-enhanced">
+                                        <i class="fas fa-map-marker-alt me-2"></i>Address
+                                    </label>
+                                    <textarea asp-for="PatientAddress" class="form-control-enhanced" rows="3" required placeholder="Enter your complete address"></textarea>
+                                    <span asp-validation-for="PatientAddress" class="validation-error"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Important Information -->
+                    <div class="appointment-info-section">
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="info-content">
+                                <h5>Important Information</h5>
+                                <ul>
+                                    <li>Please arrive 15 minutes before your scheduled appointment</li>
+                                    <li>Bring a valid ID and any relevant medical records</li>
+                                    <li>Appointment confirmations will be sent via SMS and email</li>
+                                    <li>We are closed on Fridays and Saturdays</li>
+                                    <li>For emergency cases, please call our 24/7 helpline</li>
+                                    <li>Time slots shown are based on real-time availability</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <a asp-action="Index" class="btn-secondary-enhanced">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Choose Different Doctor
+                        </a>
+                        <a asp-action="AppointmentManagement" class="btn-outline-info-enhanced me-3">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            View All Appointments
+                        </a>
+                        <button type="submit" class="btn-primary-enhanced">
+                            <i class="fas fa-calendar-check me-2"></i>
+                            <span>Confirm Appointment</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trust Indicators -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="trust-indicators">
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h6>Secure & Private</h6>
+                    <p>Your information is protected with advanced encryption</p>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h6>Real-time Availability</h6>
+                    <p>See only available time slots</p>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <h6>24/7 Support</h6>
+                    <p>Round-the-clock customer assistance</p>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h6>Quality Care</h6>
+                    <p>Trusted by thousands of patients</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Enhanced form functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('appointmentDate');
+            const timeInput = document.getElementById('appointmentTime');
+            const timeSlotLoader = document.getElementById('timeSlotLoader');
+            const timeSlotHelp = document.getElementById('timeSlotHelp');
+            const form = document.getElementById('appointmentForm');
+            const doctorId = @Model.DoctorId;
+            
+            // Function to disable Friday and Saturday
+            function disableWeekends() {
+                const today = new Date();
+                const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                
+                // Set min date to today
+                dateInput.min = minDate.toISOString().split('T')[0];
+                
+                // Function to check if date is Friday (5) or Saturday (6)
+                function isWeekend(date) {
+                    const day = new Date(date).getDay();
+                    return day === 5 || day === 6; // Friday = 5, Saturday = 6
+                }
+                
+                // Validate date selection and load available times
+                dateInput.addEventListener('change', function() {
+                    const selectedDate = this.value;
+                    
+                    // Clear previous validation states
+                    this.classList.remove('is-invalid', 'is-valid');
+                    const errorSpan = this.parentElement.querySelector('.validation-error');
+                    errorSpan.textContent = '';
+                    errorSpan.style.display = 'none';
+                    
+                    if (selectedDate && isWeekend(selectedDate)) {
+                        // Show error message
+                        errorSpan.textContent = 'We are closed on Fridays and Saturdays. Please select another date.';
+                        errorSpan.style.display = 'block';
+                        this.classList.add('is-invalid');
+                        
+                        // Clear time options
+                        timeInput.innerHTML = '<option value="">Select a valid date first</option>';
+                        timeSlotHelp.textContent = 'Please select a valid date first';
+                        return;
+                    } else if (selectedDate) {
+                        this.classList.add('is-valid');
+                        
+                        // Load available time slots
+                        loadAvailableTimeSlots(selectedDate);
+                    } else {
+                        // Reset time options when no date is selected
+                        timeInput.innerHTML = '<option value="">Select a date first</option>';
+                        timeSlotHelp.textContent = 'Available slots will appear after selecting a date';
+                    }
+                });
+            }
+            
+            // Function to load available time slots from server
+            async function loadAvailableTimeSlots(date) {
+                try {
+                    // Show loader
+                    timeSlotLoader.classList.remove('d-none');
+                    timeSlotHelp.classList.add('d-none');
+                    timeInput.disabled = true;
+                    
+                    // Clear current options
+                    timeInput.innerHTML = '<option value="">Loading...</option>';
+                    
+                    // Make API call to get available slots
+                    const response = await fetch(`@Url.Action("GetAvailableTimeSlots", "Doctors")?doctorId=${doctorId}&date=${date}`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to load time slots');
+                    }
+                    
+                    const availableSlots = await response.json();
+                    
+                    // Clear options
+                    timeInput.innerHTML = '';
+                    
+                    if (availableSlots.length === 0) {
+                        timeInput.innerHTML = '<option value="">No available slots for this date</option>';
+                        timeSlotHelp.textContent = 'No available time slots for the selected date. Please choose another date.';
+                        timeSlotHelp.style.color = '#dc3545';
+                    } else {
+                        // Add default option
+                        timeInput.innerHTML = '<option value="">Select available time</option>';
+                        
+                        // Add available slots
+                        availableSlots.forEach(slot => {
+                            const option = document.createElement('option');
+                            option.value = slot.value;
+                            option.textContent = slot.text;
+                            timeInput.appendChild(option);
+                        });
+                        
+                        timeSlotHelp.textContent = `${availableSlots.length} time slot${availableSlots.length !== 1 ? 's' : ''} available`;
+                        timeSlotHelp.style.color = '#28a745';
+                    }
+                    
+                } catch (error) {
+                    console.error('Error loading time slots:', error);
+                    timeInput.innerHTML = '<option value="">Error loading time slots</option>';
+                    timeSlotHelp.textContent = 'Error loading time slots. Please try again.';
+                    timeSlotHelp.style.color = '#dc3545';
+                } finally {
+                    // Hide loader
+                    timeSlotLoader.classList.add('d-none');
+                    timeSlotHelp.classList.remove('d-none');
+                    timeInput.disabled = false;
+                }
+            }
+            
+            // Initialize weekend restrictions
+            disableWeekends();
+            
+            // Form submission validation
+            form.addEventListener('submit', function(e) {
+                const selectedDate = dateInput.value;
+                
+                // Check if weekend is selected (double-check)
+                if (selectedDate) {
+                    const day = new Date(selectedDate).getDay();
+                    if (day === 5 || day === 6) {
+                        e.preventDefault();
+                        alert('We are closed on Fridays and Saturdays. Please select a different date.');
+                        return false;
+                    }
+                }
+                
+                // Check if time is selected
+                if (!timeInput.value) {
+                    e.preventDefault();
+                    const errorSpan = timeInput.parentElement.querySelector('.validation-error');
+                    errorSpan.textContent = 'Please select an appointment time.';
+                    errorSpan.style.display = 'block';
+                    timeInput.classList.add('is-invalid');
+                    return false;
+                }
+            });
+
+            // Add smooth animations
+            const formSections = document.querySelectorAll('.form-section');
+            formSections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    section.style.transition = 'all 0.6s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+
+            // Enhanced form validation feedback
+            const inputs = document.querySelectorAll('.form-control-enhanced');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.checkValidity()) {
+                        this.classList.add('is-valid');
+                        this.classList.remove('is-invalid');
+                    } else {
+                        this.classList.add('is-invalid');
+                        this.classList.remove('is-valid');
+                    }
+                });
+            });
+
+            // Time slot selection validation
+            timeInput.addEventListener('change', function() {
+                if (this.value) {
+                    this.classList.add('is-valid');
+                    this.classList.remove('is-invalid');
+                    const errorSpan = this.parentElement.querySelector('.validation-error');
+                    errorSpan.style.display = 'none';
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MediCare Hospital System</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HospitalSystem.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Main Navigation -->
+    <header class="main-header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <div class="brand-logo">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>MediCare</span>
+                    </div>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"/>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Doctors" asp-action="Index">
+                                <i class="fas fa-calendar-check me-1"></i>
+                                Book Appointment
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Doctors" asp-action="AppointmentManagement">
+                                <i class="fas fa-calendar-alt me-1"></i>
+                                Manage Appointments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="services">
+                                <i class="fas fa-stethoscope me-1"></i>
+                                Services
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="HospitalInfo">
+                                <i class="fas fa-info-circle me-1"></i>
+                                About Us
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="navbar-cta">
+                        <a asp-area="" asp-controller="Doctors" asp-action="Index" class="btn btn-cta">
+                            <i class="fas fa-plus me-1"></i>
+                            Emergency Booking
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h5 class="footer-title">
+                            <i class="fas fa-heartbeat me-2"></i>
+                            MediCare Hospital
+                        </h5>
+                        <p class="footer-text">
+                            Providing exceptional healthcare services with compassion, innovation, and excellence. Your health
+                            is our priority.
+                        </p>
+                        <div class="footer-social">
+                            <a href="#" class="footer-social-link"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="footer-social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="footer-social-link"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="footer-social-link"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h6 class="footer-subtitle">Quick Links</h6>
+                        <ul class="footer-links">
+                            <li><a asp-area="" asp-controller="Doctors" asp-action="Index">Our Doctors</a></li>
+                            <li><a asp-area="" asp-controller="Doctors" asp-action="AppointmentManagement">Manage Appointments</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="services">Services</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="HospitalInfo">About Us</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h6 class="footer-subtitle">Contact Info</h6>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>123 Medical Center Dr<br>Health City, HC 12345</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone-alt"></i>
+                                <span>+1-234-567-8900</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>info@medicare.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h6 class="footer-subtitle">Emergency Hours</h6>
+                        <div class="hours-info">
+                            <div class="hours-item">
+                                <span class="day">Monday - Friday</span>
+                                <span class="time">8:00 AM - 10:00 PM</span>
+                            </div>
+                            <div class="hours-item">
+                                <span class="day">Saturday - Sunday</span>
+                                <span class="time">24/7 Emergency</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="copyright">
+                            &copy; 2025 MediCare Hospital System. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="footer-badges">
+                            <span class="badge bg-success">JCI Accredited</span>
+                            <span class="badge bg-primary">ISO Certified</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

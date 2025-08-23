@@ -1,0 +1,276 @@
+@model HospitalSystem.ViewModels.HospitalInfoVM
+
+@{
+    ViewData["Title"] = "About MediCare Hospital";
+}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content fade-in">
+                    <h1 class="hero-title">About @Model.Name</h1>
+                    <p class="hero-subtitle">Excellence in healthcare since @Model.EstablishedYear. We are committed to providing exceptional medical care with compassion, innovation, and the highest standards of patient safety.</p>
+                    <div class="hero-actions">
+                        <a asp-controller="Doctors" asp-action="Index" class="btn btn-cta btn-lg me-3">
+                            <i class="fas fa-calendar-plus me-2"></i>
+                            Book Appointment
+                        </a>
+                        <a href="#hospital-details" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image text-center">
+                    <i class="fas fa-hospital" style="font-size: 12rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card primary slide-up">
+                    <div class="stat-number">@Model.EstablishedYear</div>
+                    <div class="stat-label">Established Year</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card success slide-up">
+                    <div class="stat-number">@Model.TotalBeds</div>
+                    <div class="stat-label">Hospital Beds</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card info slide-up">
+                    <div class="stat-number">@Model.TotalStaff</div>
+                    <div class="stat-label">Medical Staff</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card warning slide-up">
+                    <div class="stat-number">@Model.Departments.Count</div>
+                    <div class="stat-label">Medical Departments</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hospital Information Section -->
+<section id="hospital-details" class="container mt-5 pt-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="section-title">Hospital Information</h2>
+            <p class="section-subtitle">Your trusted healthcare partner</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <!-- General Information Card -->
+        <div class="col-lg-6">
+            <div class="service-card h-100">
+                <div class="service-icon primary">
+                    <i class="fas fa-hospital"></i>
+                </div>
+                <h5 class="service-title">Hospital Details</h5>
+                <div class="hospital-info-details">
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt text-primary me-3"></i>
+                        <div>
+                            <strong>Location:</strong><br>
+                            <span class="text-muted">@Model.Address</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone-alt text-primary me-3"></i>
+                        <div>
+                            <strong>Contact:</strong><br>
+                            <span class="text-muted">@Model.ContactPhone</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt text-primary me-3"></i>
+                        <div>
+                            <strong>Established:</strong><br>
+                            <span class="text-muted">@Model.EstablishedYear</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accreditation Card -->
+        <div class="col-lg-6">
+            <div class="service-card h-100">
+                <div class="service-icon @(Model.IsAccredited ? "success" : "warning")">
+                    <i class="fas @(Model.IsAccredited ? "fa-check-circle" : "fa-clock")"></i>
+                </div>
+                <h5 class="service-title">Accreditation Status</h5>
+                <div class="accreditation-content">
+                    @if (Model.IsAccredited)
+                    {
+                        <div class="accreditation-badge mb-3">
+                            <span class="badge bg-success fs-6">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Fully Accredited Hospital
+                            </span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="accreditation-badge mb-3">
+                            <span class="badge bg-warning fs-6">
+                                <i class="fas fa-clock me-2"></i>
+                                Accreditation In Progress
+                            </span>
+                        </div>
+                    }
+                    <p class="text-muted">We maintain the highest standards of healthcare quality and safety. Our commitment to excellence ensures that you receive world-class medical care.</p>
+                    
+                    <div class="certification-badges">
+                        <span class="badge bg-success me-2 mb-2">JCI Accredited</span>
+                        <span class="badge bg-primary me-2 mb-2">ISO Certified</span>
+                        <span class="badge bg-info me-2 mb-2">WHO Compliant</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Medical Departments Section -->
+<section class="services-grid-section">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <h2 class="section-title">Medical Departments</h2>
+            <p class="section-subtitle">Comprehensive healthcare services across all specialties</p>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            @{
+                var departmentIcons = new string[] { 
+                    "fas fa-stethoscope", "fas fa-heartbeat", "fas fa-user-md", "fas fa-x-ray", 
+                    "fas fa-microscope", "fas fa-syringe", "fas fa-brain", "fas fa-eye"
+                };
+                var departmentColors = new string[] { "primary", "success", "info", "warning" };
+            }
+            
+            @for (int i = 0; i < Model.Departments.Count; i++)
+            {
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                    <div class="service-item w-100">
+                        <div class="service-icon-wrapper @departmentColors[i % 4]">
+                            <i class="@(departmentIcons[i % departmentIcons.Length])"></i>
+                        </div>
+                        <h6 class="service-name">@Model.Departments[i]</h6>
+                        <div class="service-description">
+                            Expert medical care with state-of-the-art facilities
+                        </div>
+                        <div class="service-badge">
+                            <span class="badge bg-light text-primary">Expert Care</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="container">
+    <div class="features-section">
+        <h2 class="features-title">Why Choose @Model.Name?</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>@Model.TotalBeds+ Hospital Beds Available</span>
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>@Model.TotalStaff+ Qualified Medical Staff</span>
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>24/7 Emergency Services</span>
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Modern Medical Equipment</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Experienced Medical Professionals</span>
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Patient-Centered Care</span>
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Insurance Accepted</span>
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>@(Model.IsAccredited ? "Fully Accredited" : "Quality Assured") Facility</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="container mt-5 pt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center p-5" style="background: var(--gradient-primary); border-radius: var(--border-radius); color: white;">
+                <h2 class="mb-3">Experience Excellence in Healthcare</h2>
+                <p class="lead mb-4">Book your appointment today and discover why we're the trusted choice for quality medical care.</p>
+                <div class="hospital-cta-actions">
+                    <a asp-controller="Doctors" asp-action="Index" class="btn btn-cta btn-lg me-3">
+                        <i class="fas fa-calendar-plus me-2"></i>
+                        Book Appointment
+                    </a>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-home me-2"></i>
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // Add fade-in animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.service-card, .service-item, .stat-card').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+}
