@@ -1,0 +1,232 @@
+@using MovieApp.ViewModels
+@model ActorsIndexVM
+@{
+    ViewData["Title"] = "Actors";
+}
+
+<div class="section-wrapper">
+    <div class="container py-4">
+        <!-- Page Header -->
+        <div class="section-heading" data-aos="fade-up" data-aos-duration="1000">
+            <h2><i class="fas fa-users me-3"></i>Our Talented Cast</h2>
+            <p class="subtitle">Meet the amazing actors who bring our movies to life</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="actor-search-container mb-4" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="form-control search-input" id="actorSearch" placeholder="Search actors by name or bio...">
+                <button class="btn-clear-search" type="button" id="clearSearch" title="Clear search" style="display: none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-results-info mt-2" id="searchResultsInfo" style="display: none;">
+                <small class="text-secondary"></small>
+            </div>
+        </div>
+
+        <!-- Actors Grid -->
+        @if (Model.Actors.Any())
+        {
+            <div class="actors-list" id="actorsGrid">
+                @{
+                    int actorIndex = 0;
+                }
+                @foreach (var actor in Model.Actors)
+                {
+                    <div class="actor-item" 
+                        data-searchable="@($"{actor.FullName} {actor.Bio}".ToLower())"
+                        data-aos="fade-up" 
+                        data-aos-duration="600" 
+                        data-aos-delay="@((actorIndex * 100) % 800)">
+                        <div class="actor-avatar-wrapper">
+                            <img src="@actor.ProfileImagePath" 
+                                class="actor-avatar-small" 
+                                alt="@actor.FullName"
+                                loading="lazy"
+                                onerror="this.src='/images/default-actor.svg'">
+                        </div>
+                        <div class="actor-details">
+                            <div class="actor-header">
+                                <h5 class="actor-name mb-1">@actor.FullName</h5>
+                                <span class="actor-movies-badge">
+                                    @actor.MovieCount @(actor.MovieCount == 1 ? "Movie" : "Movies")
+                                </span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(actor.Bio))
+                            {
+                                <p class="actor-bio-short mb-2">@(actor.Bio.Length > 80 ? actor.Bio.Substring(0, 80) + "..." : actor.Bio)</p>
+                            }
+                            
+                            <!-- Actor's Recent Movies -->
+                            @if (actor.RecentMovies.Any())
+                            {
+                                <div class="actor-movies mb-2">
+                                    <div class="movie-tags">
+                                        @foreach (var movieTitle in actor.RecentMovies.Take(2))
+                                        {
+                                            <span class="movie-tag">@movieTitle</span>
+                                        }
+                                        @if (actor.MovieCount > 2)
+                                        {
+                                            <span class="movie-tag-more">+@(actor.MovieCount - 2) more</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="actor-actions">
+                            <a asp-area="Public" asp-controller="Actors" asp-action="Details" asp-route-id="@actor.Id" class="btn btn-view-profile">
+                                <i class="fas fa-user me-1"></i>View Profile
+                            </a>
+                        </div>
+                    </div>
+                    actorIndex++;
+                }
+            </div>
+            
+            <!-- No Results Message (initially hidden) -->
+            <div id="noResultsMessage" class="empty-state" style="display: none;" data-aos="fade-in" data-aos-duration="600">
+                <i class="fas fa-search"></i>
+                <h4>No actors found</h4>
+                <p>No actors match your search criteria. Try a different search term.</p>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state" data-aos="fade-in" data-aos-duration="800">
+                <i class="fas fa-users"></i>
+                <h4>No actors found</h4>
+                <p>There are no actors available in our database at the moment.</p>
+            </div>
+        }
+
+        <!-- Actor Statistics -->
+        <div class="row mt-5 text-center">
+            <div class="col-md-4" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="200">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="fas fa-users fa-3x text-primary-custom mb-3"></i>
+                        <h4 class="text-primary-custom">@Model.TotalActors</h4>
+                        <p class="mb-0">Total Actors</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="400">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="fas fa-film fa-3x text-primary-custom mb-3"></i>
+                        <h4 class="text-primary-custom">@Model.TotalMovieAppearances</h4>
+                        <p class="mb-0">Total Appearances</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="600">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="fas fa-star fa-3x text-primary-custom mb-3"></i>
+                        <h4 class="text-primary-custom">@(Model.Actors.Any() ? Model.Actors.OrderByDescending(a => a.MovieCount).First().FullName : "N/A")</h4>
+                        <p class="mb-0">Most Active</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('actorSearch');
+            const clearSearchBtn = document.getElementById('clearSearch');
+            const actorsGrid = document.getElementById('actorsGrid');
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            const searchResultsInfo = document.getElementById('searchResultsInfo');
+            const totalActors = @Model.TotalActors;
+
+            function updateSearchResults() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                const items = Array.from(actorsGrid.children);
+                let visibleCount = 0;
+
+                items.forEach(item => {
+                    const searchableText = item.dataset.searchable || '';
+                    const shouldShow = searchableText.includes(searchTerm);
+                    
+                    if (shouldShow) {
+                        item.style.display = 'flex';
+                        visibleCount++;
+                        // Re-trigger AOS animation for visible items
+                        item.classList.remove('aos-animate');
+                        setTimeout(() => {
+                            item.classList.add('aos-animate');
+                        }, 10);
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Update search results info
+                if (searchTerm.length > 0) {
+                    searchResultsInfo.style.display = 'block';
+                    const infoText = searchResultsInfo.querySelector('small');
+                    if (visibleCount === 0) {
+                        infoText.textContent = 'No actors found for "' + searchInput.value + '"';
+                        infoText.className = 'text-warning';
+                    } else if (visibleCount === totalActors) {
+                        infoText.textContent = 'Showing all ' + totalActors + ' actors';
+                        infoText.className = 'text-secondary';
+                    } else {
+                        infoText.textContent = 'Showing ' + visibleCount + ' of ' + totalActors + ' actors';
+                        infoText.className = 'text-info';
+                    }
+                } else {
+                    searchResultsInfo.style.display = 'none';
+                }
+
+                // Show/hide no results message
+                if (noResultsMessage) {
+                    if (visibleCount === 0 && searchTerm.length > 0) {
+                        noResultsMessage.style.display = 'block';
+                        actorsGrid.style.display = 'none';
+                    } else {
+                        noResultsMessage.style.display = 'none';
+                        actorsGrid.style.display = 'block';
+                    }
+                }
+
+                // Show/hide clear button
+                clearSearchBtn.style.display = searchTerm.length > 0 ? 'flex' : 'none';
+            }
+
+            if (searchInput && actorsGrid) {
+                // Search input event
+                searchInput.addEventListener('input', updateSearchResults);
+
+                // Clear search functionality
+                if (clearSearchBtn) {
+                    clearSearchBtn.addEventListener('click', function() {
+                        searchInput.value = '';
+                        updateSearchResults();
+                        searchInput.focus();
+                        // Refresh AOS animations
+                        AOS.refresh();
+                    });
+                }
+
+                // Keyboard shortcuts
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        this.value = '';
+                        updateSearchResults();
+                        AOS.refresh();
+                    }
+                });
+
+                // Initialize
+                updateSearchResults();
+            }
+        });
+    </script>
+}

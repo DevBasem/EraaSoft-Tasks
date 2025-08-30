@@ -1,0 +1,483 @@
+@model MovieApp.ViewModels.Admin.DashboardVM
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="admin-page-header admin-fade-in">
+    <h1 class="admin-page-title">Dashboard</h1>
+    <div class="d-flex gap-2">
+        <div class="dropdown">
+            <button class="admin-btn admin-btn-outline admin-btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-calendar-alt me-1"></i> This Week
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Week</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
+        </div>
+        <button class="admin-btn admin-btn-outline admin-btn-sm">
+            <i class="fas fa-download me-1"></i> Export Report
+        </button>
+    </div>
+</div>
+
+<!-- Overview Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-sm-6 col-xl-3 admin-fade-in-delay-1">
+        <div class="admin-card">
+            <div class="admin-stat-card admin-bg-primary">
+                <div class="admin-stat-icon admin-text-primary">
+                    <i class="fas fa-film"></i>
+                </div>
+                <div class="admin-stat-title">Total Movies</div>
+                <div class="admin-stat-value">@Model.TotalMovies</div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small>@Model.NowShowingMovies showing, @Model.ComingSoonMovies coming</small>
+                    <span class="admin-badge admin-badge-primary">+5%</span>
+                </div>
+                <div class="admin-progress mb-3">
+                    <div class="admin-progress-bar" style="width: 65%"></div>
+                </div>
+                <a asp-area="Admin" asp-controller="Movies" asp-action="Index" class="admin-stat-link">
+                    View all movies <i class="fas fa-arrow-right"></i>
+                </a>
+                <i class="fas fa-film admin-stat-background"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-sm-6 col-xl-3 admin-fade-in-delay-2">
+        <div class="admin-card">
+            <div class="admin-stat-card admin-bg-success">
+                <div class="admin-stat-icon admin-text-success">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="admin-stat-title">Total Actors</div>
+                <div class="admin-stat-value">@Model.TotalActors</div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small>@(Model.TotalActors > 0 ? Model.TotalActors / 2 : 0) featured</small>
+                    <span class="admin-badge admin-badge-success">+12%</span>
+                </div>
+                <div class="admin-progress mb-3">
+                    <div class="admin-progress-bar" style="width: 78%"></div>
+                </div>
+                <a asp-area="Admin" asp-controller="Actors" asp-action="Index" class="admin-stat-link">
+                    View all actors <i class="fas fa-arrow-right"></i>
+                </a>
+                <i class="fas fa-users admin-stat-background"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-sm-6 col-xl-3 admin-fade-in-delay-3">
+        <div class="admin-card">
+            <div class="admin-stat-card admin-bg-warning">
+                <div class="admin-stat-icon admin-text-warning">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="admin-stat-title">Total Categories</div>
+                <div class="admin-stat-value">@Model.TotalCategories</div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small>@(Model.TotalCategories > 0 ? Model.TotalCategories / 2 : 0) active</small>
+                    <span class="admin-badge admin-badge-warning">+3%</span>
+                </div>
+                <div class="admin-progress mb-3">
+                    <div class="admin-progress-bar" style="width: 45%"></div>
+                </div>
+                <a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="admin-stat-link">
+                    View all categories <i class="fas fa-arrow-right"></i>
+                </a>
+                <i class="fas fa-tags admin-stat-background"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-sm-6 col-xl-3 admin-fade-in-delay-4">
+        <div class="admin-card">
+            <div class="admin-stat-card admin-bg-primary">
+                <div class="admin-stat-icon admin-text-primary">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="admin-stat-title">Total Cinemas</div>
+                <div class="admin-stat-value">@Model.TotalCinemas</div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small>@(Model.TotalCinemas > 0 ? Model.TotalCinemas / 2 : 0) featured</small>
+                    <span class="admin-badge admin-badge-primary">+8%</span>
+                </div>
+                <div class="admin-progress mb-3">
+                    <div class="admin-progress-bar" style="width: 60%"></div>
+                </div>
+                <a asp-area="Admin" asp-controller="Cinemas" asp-action="Index" class="admin-stat-link">
+                    View all cinemas <i class="fas fa-arrow-right"></i>
+                </a>
+                <i class="fas fa-building admin-stat-background"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8 admin-fade-in-delay-1">
+        <div class="admin-card h-100">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Movie Statistics</h5>
+                <div class="d-flex gap-2">
+                    <button class="admin-btn admin-btn-outline admin-btn-sm">
+                        <i class="fas fa-sync-alt me-1"></i> Refresh
+                    </button>
+                    <button class="admin-btn admin-btn-outline admin-btn-sm">
+                        <i class="fas fa-download me-1"></i> Export
+                    </button>
+                </div>
+            </div>
+            <div class="admin-card-body">
+                <div class="admin-chart-container">
+                    <canvas id="movieTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 admin-fade-in-delay-2">
+        <div class="admin-card h-100">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Movies Status</h5>
+                <button class="admin-btn admin-btn-outline admin-btn-sm">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
+            <div class="admin-card-body">
+                <div class="admin-chart-container mb-3" style="height: 200px;">
+                    <canvas id="movieStatusChart"></canvas>
+                </div>
+                <div class="d-flex justify-content-around mb-3">
+                    <div class="text-center">
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <span class="d-inline-block rounded-circle admin-bg-primary" style="width: 12px; height: 12px; margin-right: 6px;"></span>
+                            <span>Now Showing</span>
+                        </div>
+                        <h4 class="m-0">@Model.NowShowingMovies</h4>
+                    </div>
+                    <div class="text-center">
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <span class="d-inline-block rounded-circle admin-bg-success" style="width: 12px; height: 12px; margin-right: 6px;"></span>
+                            <span>Coming Soon</span>
+                        </div>
+                        <h4 class="m-0">@Model.ComingSoonMovies</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 admin-fade-in-delay-2">
+        <div class="admin-card h-100">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Recent Activities</h5>
+                <a href="#" class="admin-btn admin-btn-outline admin-btn-sm">View All</a>
+            </div>
+            <div class="admin-card-body">
+                <div class="admin-timeline">
+                    <div class="admin-timeline-item">
+                        <div class="admin-timeline-time">Just now</div>
+                        <div class="admin-timeline-content">
+                            <strong>Admin</strong> added a new movie <a href="#" class="admin-text-primary">The Last Voyage</a>
+                        </div>
+                    </div>
+                    <div class="admin-timeline-item">
+                        <div class="admin-timeline-time">2 hours ago</div>
+                        <div class="admin-timeline-content">
+                            <strong>Admin</strong> updated category <a href="#" class="admin-text-primary">Science Fiction</a>
+                        </div>
+                    </div>
+                    <div class="admin-timeline-item">
+                        <div class="admin-timeline-time">Yesterday</div>
+                        <div class="admin-timeline-content">
+                            <strong>Admin</strong> added a new actor <a href="#" class="admin-text-primary">Emma Stone</a>
+                        </div>
+                    </div>
+                    <div class="admin-timeline-item">
+                        <div class="admin-timeline-time">3 days ago</div>
+                        <div class="admin-timeline-content">
+                            <strong>System</strong> performed database backup
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 admin-fade-in-delay-3">
+        <div class="admin-card h-100">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Recent Movies</h5>
+                <a asp-area="Admin" asp-controller="Movies" asp-action="Index" class="admin-btn admin-btn-primary admin-btn-sm">View All</a>
+            </div>
+            <div class="admin-card-body p-0">
+                <div class="admin-table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Year</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var movie in Model.RecentMovies)
+                            {
+                                <tr>
+                                    <td>@movie.Title</td>
+                                    <td>@movie.CategoryName</td>
+                                    <td>@movie.ReleaseYear</td>
+                                    <td>
+                                        @if (movie.Status == MovieApp.Models.MovieStatus.NowShowing)
+                                        {
+                                            <span class="admin-badge admin-badge-primary">Now Showing</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="admin-badge admin-badge-success">Coming Soon</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="admin-btn-group">
+                                            <a asp-area="Admin" asp-controller="Movies" asp-action="Edit" asp-route-id="@movie.Id" class="admin-btn admin-btn-outline admin-btn-sm" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-area="Admin" asp-controller="Movies" asp-action="Details" asp-route-id="@movie.Id" class="admin-btn admin-btn-outline admin-btn-sm" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 mb-4 admin-fade-in-delay-1">
+        <div class="admin-card h-100">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Quick Actions</h5>
+            </div>
+            <div class="admin-card-body">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action border-0 mb-2" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-plus-circle me-2 admin-text-primary"></i>
+                                Add New Movie
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action border-0 mb-2" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-user-plus me-2 admin-text-success"></i>
+                                Add New Actor
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action border-0 mb-2" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-tag me-2 admin-text-warning"></i>
+                                Add New Category
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action border-0" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-building me-2 admin-text-primary"></i>
+                                Add New Cinema
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8 mb-4 admin-fade-in-delay-2">
+        <div class="admin-card h-100">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">System Status</h5>
+            </div>
+            <div class="admin-card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="admin-text-muted mb-3">Resource Usage</h6>
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>CPU Usage</span>
+                                <span>28%</span>
+                            </div>
+                            <div class="admin-progress">
+                                <div class="admin-progress-bar" style="width: 28%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Memory Usage</span>
+                                <span>65%</span>
+                            </div>
+                            <div class="admin-progress">
+                                <div class="admin-progress-bar" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Disk Usage</span>
+                                <span>42%</span>
+                            </div>
+                            <div class="admin-progress">
+                                <div class="admin-progress-bar" style="width: 42%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="admin-text-muted mb-3">Last Backups</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2 d-flex justify-content-between">
+                                <span><i class="fas fa-database me-2 admin-text-primary"></i> Database</span>
+                                <span>2 hours ago</span>
+                            </li>
+                            <li class="mb-2 d-flex justify-content-between">
+                                <span><i class="fas fa-images me-2 admin-text-warning"></i> Media Files</span>
+                                <span>Yesterday</span>
+                            </li>
+                            <li class="d-flex justify-content-between">
+                                <span><i class="fas fa-file-code me-2 admin-text-success"></i> System Files</span>
+                                <span>3 days ago</span>
+                            </li>
+                        </ul>
+                        <button class="admin-btn admin-btn-primary admin-btn-sm mt-3 w-100">
+                            <i class="fas fa-sync-alt me-1"></i> Run Backup Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Movie Status Chart (Doughnut)
+        const statusCtx = document.getElementById('movieStatusChart').getContext('2d');
+        const movieStatusChart = new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Now Showing', 'Coming Soon'],
+                datasets: [{
+                    data: [@Model.NowShowingMovies, @Model.ComingSoonMovies],
+                    backgroundColor: [
+                        'rgba(10, 132, 255, 0.8)',
+                        'rgba(48, 209, 88, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(10, 132, 255, 1)',
+                        'rgba(48, 209, 88, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        
+        // Movie Trend Chart (Line)
+        const trendCtx = document.getElementById('movieTrendChart').getContext('2d');
+        const movieTrendChart = new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [
+                    {
+                        label: 'Movies Added',
+                        data: [3, 5, 4, 6, 8, 10, 8, 12, 10, 9, 11, 15],
+                        borderColor: 'rgba(10, 132, 255, 1)',
+                        backgroundColor: 'rgba(10, 132, 255, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Actors Added',
+                        data: [4, 7, 5, 9, 7, 12, 11, 14, 12, 10, 13, 18],
+                        borderColor: 'rgba(48, 209, 88, 1)',
+                        backgroundColor: 'rgba(48, 209, 88, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+}

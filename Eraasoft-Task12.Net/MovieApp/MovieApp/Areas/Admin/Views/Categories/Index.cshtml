@@ -1,0 +1,424 @@
+@model IEnumerable<MovieApp.ViewModels.Admin.CategoryVM>
+@{
+    ViewData["Title"] = "Categories Management";
+}
+
+<div class="admin-page-header admin-fade-in">
+    <h1 class="admin-page-title">Categories Management</h1>
+    <a asp-action="Create" class="admin-btn admin-btn-primary admin-btn-sm">
+        <i class="fas fa-plus me-1"></i> Add New Category
+    </a>
+</div>
+
+<div class="row mb-4 admin-fade-in-delay-1">
+    <div class="col-12">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">All Categories</h5>
+                <div class="d-flex gap-2">
+                    <div class="input-group">
+                        <input type="text" id="categorySearch" class="form-control form-control-sm" placeholder="Search..." aria-label="Search">
+                        <button class="btn btn-sm btn-outline-secondary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="dropdown">
+                        <button class="admin-btn admin-btn-outline admin-btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-filter me-1"></i> Filter
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><h6 class="dropdown-header">Movies Count</h6></li>
+                            <li><a class="dropdown-item" href="#">All</a></li>
+                            <li><a class="dropdown-item" href="#">Categories with movies</a></li>
+                            <li><a class="dropdown-item" href="#">Empty categories</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Sort By</h6></li>
+                            <li><a class="dropdown-item" href="#">Name (A-Z)</a></li>
+                            <li><a class="dropdown-item" href="#">Name (Z-A)</a></li>
+                            <li><a class="dropdown-item" href="#">Most Movies</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="admin-card-body p-0">
+                <div class="admin-table-responsive">
+                    <table id="categoriesTable" class="admin-table admin-table-striped">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="name">Name</th>
+                                <th class="sortable" data-sort="description">Description</th>
+                                <th class="sortable text-center" data-sort="movies">Movies</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr data-name="@item.Name.ToLower()" data-description="@(item.Description?.ToLower() ?? "no description")" data-movies="@item.MovieCount">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3 rounded-circle" style="width: 40px; height: 40px; background-color: rgba(10,132,255,0.15); display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-tag admin-text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">@item.Name</div>
+                                                <div class="small admin-text-muted">ID: #@item.Id</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@(item.Description?.Length > 50 ? item.Description.Substring(0, 47) + "..." : item.Description ?? "No description")</td>
+                                    <td class="text-center">
+                                        <span class="admin-badge admin-badge-primary">@item.MovieCount</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-btn-group justify-content-end">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="admin-btn admin-btn-outline admin-btn-sm" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="admin-btn admin-btn-outline admin-btn-sm" title="Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="admin-btn admin-btn-outline admin-btn-sm admin-text-danger" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="admin-card-footer p-3 d-flex justify-content-between align-items-center">
+                <div>Showing <span class="fw-bold" id="displayedCategoryCount">@Model.Count()</span> of <span class="fw-bold">@Model.Count()</span> categories</div>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0" id="categoryPagination">
+                        <!-- Pagination will be generated by JavaScript -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row admin-fade-in-delay-2">
+    <div class="col-md-6 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Category Stats</h5>
+            </div>
+            <div class="admin-card-body">
+                <div class="admin-chart-container" style="height: 250px;">
+                    <canvas id="categoryStatsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Quick Actions</h5>
+            </div>
+            <div class="admin-card-body">
+                <div class="list-group mb-3">
+                    <a asp-action="Create" class="list-group-item list-group-item-action border-0 mb-2" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-plus-circle me-2 admin-text-primary"></i>
+                                Create New Category
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action border-0 mb-2" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-file-export me-2 admin-text-success"></i>
+                                Export Categories to CSV
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action border-0" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-cog me-2 admin-text-warning"></i>
+                                Category Settings
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                </div>
+                <div class="alert" role="alert" style="background-color: rgba(10,132,255,0.1); color: var(--admin-text); border: 1px solid rgba(10,132,255,0.3); border-radius: var(--admin-radius-sm);">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-info-circle admin-text-primary" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <h6 class="alert-heading mb-1">Did you know?</h6>
+                            <p class="mb-0 small">Categories can be assigned to multiple movies and help visitors find content more easily.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Category Stats Chart
+        const ctx = document.getElementById('categoryStatsChart').getContext('2d');
+        const categoryStatsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.Select(c => c.Name).Take(5))),
+                datasets: [{
+                    label: 'Movies per Category',
+                    data: @Html.Raw(Json.Serialize(Model.Select(c => c.MovieCount).Take(5))),
+                    backgroundColor: [
+                        'rgba(10, 132, 255, 0.7)',
+                        'rgba(48, 209, 88, 0.7)',
+                        'rgba(255, 214, 10, 0.7)',
+                        'rgba(94, 92, 230, 0.7)',
+                        'rgba(255, 55, 95, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(10, 132, 255, 1)',
+                        'rgba(48, 209, 88, 1)',
+                        'rgba(255, 214, 10, 1)',
+                        'rgba(94, 92, 230, 1)',
+                        'rgba(255, 55, 95, 1)'
+                    ],
+                    borderWidth: 1,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Table sorting, searching and pagination functionality
+        const categoriesTable = document.getElementById('categoriesTable');
+        const tableRows = Array.from(categoriesTable.querySelectorAll('tbody tr'));
+        const totalRows = tableRows.length;
+        const categorySearch = document.getElementById('categorySearch');
+        const displayedCategoryCount = document.getElementById('displayedCategoryCount');
+        const categoryPagination = document.getElementById('categoryPagination');
+        
+        // Pagination settings
+        const rowsPerPage = 5;
+        let currentPage = 1;
+        let filteredRows = [...tableRows];
+        
+        // Initialize table sorting
+        let currentSortColumn = 'name';
+        let currentSortDirection = 'asc';
+        
+        // Function to sort table rows
+        function sortTableRows(column, direction) {
+            currentSortColumn = column;
+            currentSortDirection = direction;
+            
+            // Remove sort classes from all headers
+            document.querySelectorAll('.admin-table th.sortable').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+            
+            // Add sort class to current header
+            const currentHeader = document.querySelector(`th[data-sort="${column}"]`);
+            currentHeader.classList.add(`sort-${direction}`);
+            
+            // Sort the rows
+            filteredRows.sort((a, b) => {
+                let aValue, bValue;
+                
+                switch(column) {
+                    case 'name':
+                        aValue = a.getAttribute('data-name');
+                        bValue = b.getAttribute('data-name');
+                        break;
+                    case 'description':
+                        aValue = a.getAttribute('data-description');
+                        bValue = b.getAttribute('data-description');
+                        break;
+                    case 'movies':
+                        aValue = parseInt(a.getAttribute('data-movies'));
+                        bValue = parseInt(b.getAttribute('data-movies'));
+                        break;
+                    default:
+                        aValue = a.querySelector('td:first-child').textContent.trim();
+                        bValue = b.querySelector('td:first-child').textContent.trim();
+                }
+                
+                if (direction === 'asc') {
+                    return aValue > bValue ? 1 : -1;
+                } else {
+                    return aValue < bValue ? 1 : -1;
+                }
+            });
+            
+            // Reset to first page and update display
+            currentPage = 1;
+            updateTableDisplay();
+        }
+        
+        // Function to filter table rows
+        function filterTableRows(searchTerm) {
+            searchTerm = searchTerm.toLowerCase();
+            
+            filteredRows = tableRows.filter(row => {
+                const name = row.getAttribute('data-name');
+                const description = row.getAttribute('data-description');
+                
+                return name.includes(searchTerm) || description.includes(searchTerm);
+            });
+            
+            // Sort filtered rows
+            sortTableRows(currentSortColumn, currentSortDirection);
+            
+            // Reset to first page and update display
+            currentPage = 1;
+            updateTableDisplay();
+        }
+        
+        // Function to generate pagination
+        function generatePagination() {
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+            categoryPagination.innerHTML = '';
+            
+            // Previous button
+            const prevLi = document.createElement('li');
+            prevLi.classList.add('page-item');
+            if (currentPage === 1) prevLi.classList.add('disabled');
+            
+            const prevLink = document.createElement('a');
+            prevLink.classList.add('page-link');
+            prevLink.href = '#';
+            prevLink.textContent = 'Previous';
+            prevLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateTableDisplay();
+                }
+            });
+            
+            prevLi.appendChild(prevLink);
+            categoryPagination.appendChild(prevLi);
+            
+            // Page numbers
+            const maxPageButtons = 3;
+            const startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+            const endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageLi = document.createElement('li');
+                pageLi.classList.add('page-item');
+                if (i === currentPage) pageLi.classList.add('active');
+                
+                const pageLink = document.createElement('a');
+                pageLink.classList.add('page-link');
+                pageLink.href = '#';
+                pageLink.textContent = i;
+                pageLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    currentPage = i;
+                    updateTableDisplay();
+                });
+                
+                pageLi.appendChild(pageLink);
+                categoryPagination.appendChild(pageLi);
+            }
+            
+            // Next button
+            const nextLi = document.createElement('li');
+            nextLi.classList.add('page-item');
+            if (currentPage === totalPages || totalPages === 0) nextLi.classList.add('disabled');
+            
+            const nextLink = document.createElement('a');
+            nextLink.classList.add('page-link');
+            nextLink.href = '#';
+            nextLink.textContent = 'Next';
+            nextLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateTableDisplay();
+                }
+            });
+            
+            nextLi.appendChild(nextLink);
+            categoryPagination.appendChild(nextLi);
+        }
+        
+        // Function to update the table display
+        function updateTableDisplay() {
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const visibleRows = filteredRows.slice(start, end);
+            
+            // Hide all rows
+            tableRows.forEach(row => {
+                row.style.display = 'none';
+            });
+            
+            // Show visible rows
+            visibleRows.forEach(row => {
+                row.style.display = '';
+            });
+            
+            // Update displayed count
+            displayedCategoryCount.textContent = filteredRows.length;
+            
+            // Update pagination
+            generatePagination();
+        }
+        
+        // Add event listeners for sorting
+        document.querySelectorAll('.admin-table th.sortable').forEach(headerCell => {
+            headerCell.addEventListener('click', () => {
+                const column = headerCell.getAttribute('data-sort');
+                const direction = headerCell.classList.contains('sort-asc') ? 'desc' : 'asc';
+                sortTableRows(column, direction);
+            });
+        });
+        
+        // Add event listener for search
+        categorySearch.addEventListener('input', (e) => {
+            filterTableRows(e.target.value);
+        });
+        
+        // Initial sort and display
+        sortTableRows('name', 'asc');
+    });
+</script>
+}

@@ -1,0 +1,151 @@
+@model MovieApp.ViewModels.Admin.ActorCreateEditVM
+
+@{
+    ViewData["Title"] = "Create Actor";
+}
+
+<div class="admin-page-header admin-fade-in">
+    <h1 class="admin-page-title">Create Actor</h1>
+    <div class="admin-btn-group">
+        <a asp-action="Index" class="admin-btn admin-btn-outline admin-btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="row admin-fade-in-delay-1">
+    <div class="col-md-12">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Actor Details</h5>
+            </div>
+            <div class="admin-card-body">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label asp-for="FullName" class="admin-label">Full Name</label>
+                                <input asp-for="FullName" class="form-control" placeholder="Enter actor's full name" required />
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i> You can provide either a profile image URL or upload a file (not both).
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label asp-for="ProfileImageFile" class="admin-label">Profile Image</label>
+                                <input asp-for="ProfileImageFile" type="file" class="form-control" accept="image/*" id="profileImageFile" />
+                                <span asp-validation-for="ProfileImageFile" class="text-danger small"></span>
+                                <small class="admin-text-muted">Recommended size: 400×600px, max 2MB</small>
+                                <div id="imagePreview" class="mt-2"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label asp-for="ProfileImagePath" class="admin-label">Profile Image URL (optional if file uploaded)</label>
+                                <input asp-for="ProfileImagePath" class="form-control" placeholder="Enter image URL" id="profileImageUrl" />
+                                <span asp-validation-for="ProfileImagePath" class="text-danger"></span>
+                                <small class="admin-text-muted">If you upload a file, this URL will be ignored</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-form-group mb-4">
+                        <label asp-for="Bio" class="admin-label">Biography</label>
+                        <textarea asp-for="Bio" class="form-control" rows="4" placeholder="Enter actor biography"></textarea>
+                        <span asp-validation-for="Bio" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="admin-btn admin-btn-primary">
+                            <i class="fas fa-save me-2"></i> Create
+                        </button>
+                        <a asp-action="Index" class="admin-btn admin-btn-outline">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileImageFile = document.getElementById('profileImageFile');
+            const imagePreview = document.getElementById('imagePreview');
+            const profileImageUrl = document.getElementById('profileImageUrl');
+            
+            if (profileImageFile) {
+                profileImageFile.addEventListener('change', function(event) {
+                    imagePreview.innerHTML = ''; // Clear previous preview
+                    
+                    if (event.target.files && event.target.files.length > 0) {
+                        const file = event.target.files[0];
+                        
+                        // Check file size (max 2MB)
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert('File size exceeds 2MB limit. Please choose a smaller file.');
+                            event.target.value = '';
+                            return;
+                        }
+                        
+                        // Clear the URL field when a file is selected
+                        if (profileImageUrl) {
+                            profileImageUrl.value = '';
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            imagePreview.innerHTML = `
+                                <div class="position-relative mt-2">
+                                    <img src="${e.target.result}" alt="Profile Image Preview" class="img-fluid shadow" 
+                                         style="max-height: 200px; border-radius: var(--admin-radius);">
+                                    <div class="badge bg-success position-absolute" style="bottom: 10px; right: 10px;">
+                                        <i class="fas fa-check-circle me-1"></i> Selected
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // When ProfileImagePath is filled, clear the file input
+            if (profileImageUrl && profileImageFile) {
+                profileImageUrl.addEventListener('input', function() {
+                    if (this.value.trim() !== '') {
+                        profileImageFile.value = '';
+                        imagePreview.innerHTML = '';
+                        
+                        // Show preview for URL if it's a valid image URL
+                        const url = this.value.trim();
+                        if (url.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+                            imagePreview.innerHTML = `
+                                <div class="position-relative mt-2">
+                                    <div class="text-center">
+                                        <small class="admin-text-muted mb-1 d-block">URL Preview (may not show if URL is inaccessible)</small>
+                                        <img src="${url}" alt="URL Preview" class="img-fluid shadow" 
+                                             style="max-height: 200px; border-radius: var(--admin-radius);"
+                                             onerror="this.onerror=null;this.src='';this.parentNode.innerHTML='<div class=\\'alert alert-warning mt-2\\'>Could not load image from URL. Please verify the URL is correct and publicly accessible.</div>';">
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

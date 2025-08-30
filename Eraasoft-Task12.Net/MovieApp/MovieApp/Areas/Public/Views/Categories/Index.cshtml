@@ -1,0 +1,83 @@
+@using MovieApp.ViewModels
+@model CategoriesIndexVM
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="section-wrapper">
+    <div class="container py-4">
+        <div class="section-heading">
+            <h2 data-aos="fade-down" data-aos-duration="1000">Movie Categories</h2>
+            <p class="subtitle" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">Explore movies by genre and discover your next favorite film</p>
+        </div>
+
+        @if (Model.Categories.Any())
+        {
+            <div class="category-grid">
+                @{
+                    int categoryIndex = 0;
+                }
+                @foreach (var category in Model.Categories)
+                {
+                    <div class="category-card category-@category.Name.ToLower()" 
+                        onclick="location.href='@Url.Action("Details", "Categories", new { area = "Public", id = category.Id })'"
+                        data-aos="fade-up-right" 
+                        data-aos-duration="800" 
+                        data-aos-delay="@((categoryIndex * 150) % 600)">
+                        <div class="category-content">
+                            <h3 class="category-name">@category.Name</h3>
+                            @if (!string.IsNullOrEmpty(category.Description))
+                            {
+                                <p class="category-description">@category.Description</p>
+                            }
+                            <span class="category-movie-count">
+                                <i class="fas fa-film me-2"></i>
+                                @category.MovieCount @(category.MovieCount == 1 ? "Movie" : "Movies")
+                            </span>
+                        </div>
+                    </div>
+                    categoryIndex++;
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state" data-aos="fade-in" data-aos-duration="800">
+                <i class="fas fa-tags"></i>
+                <h4>No categories found</h4>
+                <p>There are no movie categories available at the moment.</p>
+            </div>
+        }
+
+        <!-- Category Statistics -->
+        <div class="row mt-5 text-center">
+            <div class="col-md-4" data-aos="flip-left" data-aos-duration="800" data-aos-delay="200">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="fas fa-film fa-3x text-primary-custom mb-3"></i>
+                        <h4 class="text-primary-custom">@Model.TotalMovies</h4>
+                        <p class="mb-0">Total Movies</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="flip-up" data-aos-duration="800" data-aos-delay="400">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="fas fa-tags fa-3x text-primary-custom mb-3"></i>
+                        <h4 class="text-primary-custom">@Model.TotalCategories</h4>
+                        <p class="mb-0">Categories Available</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="flip-right" data-aos-duration="800" data-aos-delay="600">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="fas fa-star fa-3x text-primary-custom mb-3"></i>
+                        <h4 class="text-primary-custom">@Model.MostPopularCategory</h4>
+                        <p class="mb-0">Most Popular</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

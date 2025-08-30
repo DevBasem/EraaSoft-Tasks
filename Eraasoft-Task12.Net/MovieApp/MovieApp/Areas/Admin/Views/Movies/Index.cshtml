@@ -1,0 +1,288 @@
+@model IEnumerable<MovieApp.ViewModels.Admin.MovieItemVM>
+@{
+    ViewData["Title"] = "Movies Management";
+    var pager = ViewData["Pager"] as MovieApp.ViewModels.Pager;
+    var nowShowingCount = Convert.ToInt32(ViewData["NowShowingCount"]);
+    var comingSoonCount = Convert.ToInt32(ViewData["ComingSoonCount"]);
+    var currentSearchTerm = ViewData["CurrentSearchTerm"] as string ?? "";
+    var currentSortField = ViewData["CurrentSortField"] as string ?? "Title";
+    var currentSortOrder = ViewData["CurrentSortOrder"] as string ?? "asc";
+    var currentStatusFilter = ViewData["CurrentStatusFilter"] as string ?? "all";
+    
+    bool IsAllSelected = currentStatusFilter == "all";
+    bool IsNowShowingSelected = currentStatusFilter == "nowshowing";
+    bool IsComingSoonSelected = currentStatusFilter == "comingsoon";
+}
+
+<div class="admin-page-header admin-fade-in">
+    <h1 class="admin-page-title">Movies Management</h1>
+    <a asp-action="Create" class="admin-btn admin-btn-primary admin-btn-sm">
+        <i class="fas fa-plus me-1"></i> Add New Movie
+    </a>
+</div>
+
+<div class="row mb-4 admin-fade-in-delay-1">
+    <div class="col-12">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">All Movies</h5>
+                <div class="d-flex gap-2">
+                    <form method="get" class="d-flex gap-2">
+                        <div class="input-group">
+                            <input type="text" id="searchTerm" name="searchTerm" class="form-control form-control-sm" placeholder="Search..." value="@currentSearchTerm">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <select name="statusFilter" id="statusFilter" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="all" selected="@IsAllSelected">All Movies</option>
+                            <option value="nowshowing" selected="@IsNowShowingSelected">Now Showing</option>
+                            <option value="comingsoon" selected="@IsComingSoonSelected">Coming Soon</option>
+                        </select>
+                        <input type="hidden" name="page" value="1" />
+                        <input type="hidden" name="sortField" value="@currentSortField" />
+                        <input type="hidden" name="sortOrder" value="@currentSortOrder" />
+                    </form>
+                </div>
+            </div>
+            <div class="admin-card-body p-0">
+                <div class="admin-table-responsive">
+                    <table id="moviesTable" class="admin-table admin-table-striped">
+                        <thead>
+                            <tr>
+                                <th class="sortable @(currentSortField == "Title" ? "sort-" + currentSortOrder : "")" onclick="sortTable('Title')">
+                                    Movie
+                                </th>
+                                <th class="sortable @(currentSortField == "Category" ? "sort-" + currentSortOrder : "")" onclick="sortTable('Category')">
+                                    Category
+                                </th>
+                                <th class="sortable @(currentSortField == "Year" ? "sort-" + currentSortOrder : "")" onclick="sortTable('Year')">
+                                    Year
+                                </th>
+                                <th class="sortable @(currentSortField == "Status" ? "sort-" + currentSortOrder : "")" onclick="sortTable('Status')">
+                                    Status
+                                </th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            @if (!string.IsNullOrEmpty(item.PosterUrl))
+                                            {
+                                                <img src="@item.PosterUrl" alt="@item.Title" class="me-3 rounded" 
+                                                     style="width: 50px; height: 70px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.3);" />
+                                            }
+                                            else
+                                            {
+                                                <div class="me-3 rounded" style="width: 50px; height: 70px; background-color: rgba(10,132,255,0.15); display: flex; align-items: center; justify-content: center;">
+                                                    <i class="fas fa-film admin-text-primary"></i>
+                                                </div>
+                                            }
+                                            <div>
+                                                <div class="fw-bold">@item.Title</div>
+                                                <div class="small admin-text-muted">ID: #@item.Id</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@item.CategoryName</td>
+                                    <td>@item.ReleaseYear</td>
+                                    <td>
+                                        @if (item.Status == MovieApp.Models.MovieStatus.NowShowing)
+                                        {
+                                            <span class="admin-badge admin-badge-primary">Now Showing</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="admin-badge admin-badge-success">Coming Soon</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="admin-btn-group justify-content-end">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="admin-btn admin-btn-outline admin-btn-sm" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="admin-btn admin-btn-outline admin-btn-sm" title="Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="admin-btn admin-btn-outline admin-btn-sm admin-text-danger" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            @if (!Model.Any())
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center p-4">
+                                        <div class="admin-text-muted">
+                                            <i class="fas fa-search fa-2x mb-3"></i>
+                                            <p>No movies found matching your criteria.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="admin-card-footer p-3 d-flex justify-content-between align-items-center">
+                <div>
+                    @if (pager.TotalItems == 0)
+                    {
+                        <span>No movies found</span>
+                    }
+                    else
+                    {
+                        <span>Showing <span class="fw-bold">@pager.StartRecord-@pager.EndRecord</span> of <span class="fw-bold">@pager.TotalItems</span> movies</span>
+                    }
+                </div>
+                @if (pager.TotalPages > 1)
+                {
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item @(pager.CurrentPage == 1 ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { page = pager.CurrentPage - 1, searchTerm = currentSearchTerm, sortField = currentSortField, sortOrder = currentSortOrder, statusFilter = currentStatusFilter })">Previous</a>
+                            </li>
+                            
+                            @foreach(var pageNum in pager.Pages())
+                            {
+                                <li class="page-item @(pageNum == pager.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = pageNum, searchTerm = currentSearchTerm, sortField = currentSortField, sortOrder = currentSortOrder, statusFilter = currentStatusFilter })">@pageNum</a>
+                                </li>
+                            }
+                            
+                            <li class="page-item @(pager.CurrentPage == pager.TotalPages ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { page = pager.CurrentPage + 1, searchTerm = currentSearchTerm, sortField = currentSortField, sortOrder = currentSortOrder, statusFilter = currentStatusFilter })">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row admin-fade-in-delay-2">
+    <div class="col-md-6 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Movie Status Distribution</h5>
+            </div>
+            <div class="admin-card-body">
+                <div class="admin-chart-container" style="height: 250px;">
+                    <canvas id="movieStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Quick Actions</h5>
+            </div>
+            <div class="admin-card-body">
+                <div class="list-group mb-3">
+                    <a asp-action="Create" class="list-group-item list-group-item-action border-0 mb-2" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-plus-circle me-2 admin-text-primary"></i>
+                                Add New Movie
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action border-0 mb-2" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-file-export me-2 admin-text-success"></i>
+                                Export Movie List
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action border-0" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-cog me-2 admin-text-warning"></i>
+                                Movie Settings
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Status distribution chart
+        const ctx = document.getElementById('movieStatusChart').getContext('2d');
+        
+        // Status counts come from the server now
+        const nowShowing = @nowShowingCount;
+        const comingSoon = @comingSoonCount;
+        
+        const movieStatusChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Now Showing', 'Coming Soon'],
+                datasets: [{
+                    data: [nowShowing, comingSoon],
+                    backgroundColor: [
+                        'rgba(10, 132, 255, 0.8)',
+                        'rgba(48, 209, 88, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(10, 132, 255, 1)',
+                        'rgba(48, 209, 88, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+    
+    // Function to handle sorting
+    function sortTable(field) {
+        const currentSortField = '@currentSortField';
+        const currentSortOrder = '@currentSortOrder';
+        
+        let newSortOrder = 'asc';
+        if (field === currentSortField) {
+            newSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+        }
+        
+        window.location.href = '@Url.Action("Index")' + 
+            '?page=1' + 
+            '&searchTerm=@currentSearchTerm' + 
+            '&sortField=' + field + 
+            '&sortOrder=' + newSortOrder +
+            '&statusFilter=@currentStatusFilter';
+    }
+</script>
+}

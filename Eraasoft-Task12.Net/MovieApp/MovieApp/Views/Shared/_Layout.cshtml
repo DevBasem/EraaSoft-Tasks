@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MovieApp</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/base.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/movies.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/actors.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/categories.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MovieApp.styles.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- AOS CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+</head>
+<body>
+    <header class="fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark pill-nav" data-aos="fade-down" data-aos-once="true" data-aos-duration="800">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-film me-2"></i>MovieApp
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home me-1"></i>Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Movies" asp-action="Index">
+                                <i class="fas fa-film me-1"></i>Movies
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Categories" asp-action="Index">
+                                <i class="fas fa-tags me-1"></i>Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Actors" asp-action="Index">
+                                <i class="fas fa-users me-1"></i>Actors
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container-fluid p-0">
+        <main role="main" class="flex-grow-1">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="bg-dark text-light py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <h5 class="mb-3">
+                        <i class="fas fa-film me-2"></i>MovieApp
+                    </h5>
+                    <p class="mb-3 footer-text">Your ultimate destination for discovering and exploring the latest movies, from blockbuster hits to indie gems.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-icon me-3" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon me-3" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon me-3" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon me-3" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <h6 class="text-uppercase footer-heading">Movies</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">Now Showing</a></li>
+                        <li><a href="#">Coming Soon</a></li>
+                        <li><a href="#">Top Rated</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-3 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <h6 class="text-uppercase footer-heading">Categories</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Drama</a></li>
+                        <li><a href="#">Comedy</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-3 mb-4" data-aos="fade-up" data-aos-delay="400">
+                    <h6 class="text-uppercase footer-heading">Support</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-3 mb-4" data-aos="fade-up" data-aos-delay="500">
+                    <h6 class="text-uppercase footer-heading">Company</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="admin-link">Admin</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="footer-divider">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="copyright mb-0">&copy; 2025 MovieApp. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <span class="made-with">Made with <i class="fas fa-heart text-danger"></i> for movie lovers</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Rellax CDN -->
+    <script src="https://cdn.jsdelivr.net/gh/dixonandmoe/rellax@master/rellax.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/navbar.js" asp-append-version="true"></script>
+    <script src="~/js/video-hero.js" asp-append-version="true"></script>
+    <!-- AOS JavaScript -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 50,
+            delay: 100
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

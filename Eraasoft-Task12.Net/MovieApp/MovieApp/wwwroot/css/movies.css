@@ -1,0 +1,731 @@
+/* Movie Card - Glass Dark Design */
+.movie-card {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-light);
+    transition: all .3s ease;
+    backdrop-filter: var(--glass-blur);
+    display: flex;
+    flex-direction: column;
+    max-width: 350px; /* Limit maximum width of cards */
+    margin: 0 auto; /* Center the card if it's alone */
+}
+
+.movie-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-medium);
+    border-color: rgba(255,255,255,0.18);
+}
+
+.movie-poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1);
+    transition: transform .8s ease;
+    filter: brightness(0.95);
+    aspect-ratio: 2/3;
+    display: block;
+}
+
+.movie-card:hover .movie-poster {
+    transform: scale(1.05);
+    filter: brightness(1.05);
+}
+
+.movie-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, 
+        rgba(0,0,0,0.95) 0%, 
+        rgba(0,0,0,0.8) 20%, 
+        rgba(0,0,0,0.4) 50%,
+        rgba(0,0,0,0) 100%);
+    opacity: 1;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.movie-card:hover .movie-overlay {
+    background: linear-gradient(to top, 
+        rgba(0,0,0,0.98) 0%, 
+        rgba(0,0,0,0.85) 30%, 
+        rgba(0,0,0,0.5) 60%,
+        rgba(0,0,0,0.2) 100%);
+}
+
+.movie-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem;
+    color: var(--text-light);
+    transform: translateY(0);
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.movie-card:hover .movie-info {
+    transform: translateY(-5px);
+}
+
+.movie-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+    color: var(--text-light);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.movie-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+}
+
+.movie-meta i {
+    color: var(--primary-color);
+    opacity: 0.9;
+}
+
+.movie-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* New styles for ticket actions row */
+.ticket-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.movie-price {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+}
+
+.movie-price::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+/* Movie details button styling */
+.btn-details {
+    background-color: rgba(10,132,255,0.15);
+    border: 1px solid rgba(10,132,255,0.4);
+    color: var(--text-light);
+    border-radius: var(--border-radius);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    backdrop-filter: blur(4px);
+    white-space: nowrap;
+}
+
+.btn-details:hover {
+    background-color: rgba(10,132,255,0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    border-color: rgba(10,132,255,0.6);
+    color: var(--text-light);
+    text-decoration: none;
+}
+
+.btn-details i {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    transition: transform 0.2s ease;
+}
+
+.btn-details:hover i {
+    transform: translateX(2px);
+}
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.8rem;
+    margin-bottom: 2.5rem;
+    justify-items: center; /* Center items in the grid */
+}
+
+/* Alternative grid approach for better control */
+@supports (grid-template-columns: repeat(auto-fill, minmax(280px, 350px))) {
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 350px));
+        justify-content: center;
+    }
+}
+
+/* Movie Details Page */
+.movie-hero {
+    position: relative; 
+    min-height: 85vh; /* Updated to 85vh */
+    background-size: cover; 
+    background-position: center; 
+    display: flex; 
+    align-items: flex-end; 
+    overflow: hidden;
+    padding-top: calc(var(--nav-height) + 30px); /* Add padding for navbar */
+}
+
+.movie-hero::before { 
+    content: ''; 
+    position: absolute; 
+    inset: 0; 
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.95) 100%); 
+}
+
+.movie-hero-content { 
+    position: relative; 
+    z-index: 2; 
+    color: var(--text-light); 
+    padding: 3rem 0; 
+}
+
+.movie-hero-title { 
+    font-size: 3rem; 
+    font-weight: 800; 
+    margin-bottom: 1rem; 
+    letter-spacing: -0.02em; 
+}
+
+.movie-hero-meta { 
+    display: flex; 
+    align-items: center; 
+    gap: 1.2rem; 
+    margin-bottom: 1.2rem; 
+    font-size: 1.05rem; 
+    color: var(--text-secondary); 
+}
+
+.movie-hero-description { 
+    font-size: 1.1rem; 
+    line-height: 1.65; 
+    max-width: 800px; 
+    color: var(--text-secondary); 
+}
+
+.movie-details-section { 
+    padding: 4rem 0; 
+}
+
+/* Enhanced movie details card styling */
+.movie-details-card {
+    background-color: var(--background-elev-1);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-large);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.movie-details-card .card-title {
+    color: var(--text-light);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+.movie-details-card strong {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.movie-details-card p, 
+.movie-details-card div {
+    color: var(--text-secondary);
+}
+
+.movie-details-card a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.movie-details-card a:hover {
+    color: var(--text-light);
+    text-decoration: none;
+}
+
+/* Actor info in details page */
+.actor-details-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    transition: all 0.2s ease;
+    margin-bottom: 1rem;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.actor-details-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    transform: translateY(-3px);
+}
+
+.actor-details-item img {
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.actor-details-item:hover img {
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.actor-details-item h6 {
+    margin-bottom: 0.25rem;
+}
+
+.actor-details-item h6 a {
+    color: var(--text-light);
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.actor-details-item h6 a:hover {
+    color: var(--primary-color);
+}
+
+.actor-details-item small {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    display: block;
+    line-height: 1.4;
+}
+
+.movie-stats { 
+    background: var(--background-elev-1); 
+    border-radius: var(--border-radius-large); 
+    padding: 2rem; 
+    box-shadow: var(--shadow-light);
+    margin-bottom: 2rem; 
+    border: 1px solid var(--border-color);
+}
+
+.stat-item { 
+    text-align: center; 
+    padding: 1rem; 
+}
+
+.stat-value { 
+    font-size: 2rem; 
+    font-weight: 800; 
+    color: var(--primary-color); 
+    display: block; 
+}
+
+.stat-label { 
+    font-size: 0.85rem; 
+    color: var(--text-secondary); 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px; 
+    margin-top: 0.5rem;
+}
+
+/* Movie Filter Bar */
+.filter-bar { 
+    background: rgba(30,30,30,0.6); 
+    border-radius: var(--border-radius-large); 
+    padding: 1.5rem; 
+    margin-bottom: 2rem; 
+    box-shadow: var(--shadow-light); 
+    border: 1px solid var(--border-color); 
+    backdrop-filter: var(--glass-blur); 
+}
+
+.filter-controls { 
+    display: flex; 
+    gap: 1rem; 
+    align-items: center; 
+    flex-wrap: wrap; 
+}
+
+/* Enhanced filter select styling to match dark theme */
+.filter-select { 
+    border: 1px solid var(--border-color); 
+    border-radius: 12px; 
+    padding: 0.6rem 1.2rem; 
+    background: rgba(255,255,255,0.06); 
+    color: var(--text-light); 
+    font-weight: 500;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23d1d1d6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    padding-right: 2.5rem;
+    transition: all 0.25s ease;
+}
+
+.filter-select:focus { 
+    border-color: rgba(10,132,255,0.6); 
+    outline: none; 
+    box-shadow: 0 0 0 4px rgba(10,132,255,0.15); 
+    background-color: rgba(255,255,255,0.08);
+}
+
+/* Option styling for filter selects */
+.filter-select option {
+    background-color: var(--background-elev-2);
+    color: var(--text-light);
+    padding: 0.5rem;
+}
+
+/* Browser specific fixes for filter selects */
+@-moz-document url-prefix() {
+    .filter-select {
+        background-image: none;
+        padding-right: 1.2rem;
+    }
+}
+
+/* Ticket Status */
+.ticket-status { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    padding: 0.4rem 0.8rem; 
+    border-radius: 999px; 
+    font-size: 0.8rem; 
+    font-weight: 700; 
+    border: 1px solid var(--border-color);
+    flex-shrink: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 65%;
+}
+
+.ticket-status.available { 
+    background-color: rgba(48,209,88,0.12); 
+    color: var(--success-color); 
+    border-color: rgba(48,209,88,0.35); 
+}
+
+.ticket-status.limited { 
+    background-color: rgba(255,214,10,0.12); 
+    color: var(--warning-color); 
+    border-color: rgba(255,214,10,0.35); 
+}
+
+.ticket-status.sold-out { 
+    background-color: rgba(255,69,58,0.15); 
+    color: var(--danger-color); 
+    border-color: rgba(255,69,58,0.35); 
+}
+
+.status-indicator { 
+    width: 8px; 
+    height: 8px; 
+    border-radius: 50%; 
+    background-color: currentColor; 
+    flex-shrink: 0;
+}
+
+/* Booking card styles */
+.booking-card {
+    background-color: rgba(10,132,255,0.05);
+    border: 1px solid rgba(10,132,255,0.2);
+    border-radius: var(--border-radius-large);
+}
+
+.booking-card .card-title {
+    color: var(--text-light);
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+/* Cinema card styles */
+.cinema-card {
+    background-color: rgba(255,255,255,0.03);
+}
+
+.cinema-card .card-title {
+    color: var(--text-light);
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.cinema-card p {
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.cinema-card i {
+    color: var(--primary-color);
+    width: 20px;
+    text-align: center;
+    margin-right: 0.5rem;
+}
+
+/* Pagination Styles */
+.pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(30,30,30,0.6);
+    border-radius: var(--border-radius-large);
+    border: 1px solid var(--border-color);
+    backdrop-filter: var(--glass-blur);
+}
+
+.pagination-info {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 0;
+    gap: 0.5rem;
+}
+
+.page-item:first-child .page-link {
+    border-top-left-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+}
+
+.page-item:last-child .page-link {
+    border-top-right-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+}
+
+.page-link {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-light);
+    text-decoration: none;
+    background-color: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-color);
+    transition: all 0.25s ease;
+    border-radius: var(--border-radius);
+    margin: 0 2px;
+}
+
+.page-link:hover {
+    background-color: rgba(255,255,255,0.1);
+    border-color: var(--border-color);
+    color: var(--text-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(10,132,255,0.4);
+}
+
+.page-item.disabled .page-link {
+    color: var(--text-gray);
+    pointer-events: none;
+    background-color: rgba(255,255,255,0.02);
+    border-color: var(--border-color);
+    opacity: 0.5;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--background-elev-1);
+    border-radius: var(--border-radius-large);
+    border: 1px solid var(--border-color);
+}
+
+.empty-state i {
+    font-size: 3.5rem;
+    color: var(--text-gray);
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+}
+
+.empty-state h4 {
+    color: var(--text-light);
+    margin-bottom: 0.8rem;
+}
+
+.empty-state p {
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Consistent Movie Sections */
+.movie-section {
+    padding: 4rem 0;
+}
+
+.movie-section:nth-child(odd) {
+    background-color: var(--background-dark);
+}
+
+.movie-section:nth-child(even) {
+    background-color: var(--background-elev-1);
+}
+
+/* Responsive Movie Grid */
+@media (max-width: 1200px) { 
+    .movie-grid { 
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+        gap: 1.5rem; 
+    }
+    
+    .movie-card {
+        max-width: 320px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .movie-hero {
+        padding-top: calc(var(--nav-height) + 20px); /* Adjust top padding on tablet */
+        min-height: 85vh; /* Maintain 85vh on tablet */
+    }
+    
+    .pagination-wrapper {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .movie-card {
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .movie-grid { 
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+        gap: 1.2rem; 
+    }
+    
+    .movie-title {
+        font-size: 1.1rem;
+    }
+    
+    .movie-hero { 
+        padding-top: calc(var(--nav-height) + 15px); /* Adjust top padding on mobile */
+        min-height: 85vh; /* Maintain 85vh on mobile */
+    }
+    
+    .movie-hero-title { 
+        font-size: 2.2rem; 
+    }
+    
+    .movie-hero-meta { 
+        flex-wrap: wrap; 
+        gap: 0.8rem; 
+    }
+    
+    .filter-controls { 
+        flex-direction: column; 
+        align-items: stretch; 
+    }
+    
+    .filter-select { 
+        width: 100%; 
+    }
+    
+    .movie-meta {
+        gap: 0.7rem;
+    }
+    
+    .movie-section {
+        padding: 3rem 0;
+    }
+    
+    .ticket-actions-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .ticket-status {
+        max-width: 100%;
+    }
+    
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .movie-card {
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 576px) {
+    .movie-title {
+        font-size: 1rem;
+    }
+    
+    .movie-price {
+        font-size: 1rem;
+    }
+    
+    .btn-details {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .pagination {
+        gap: 0.25rem;
+    }
+    
+    .page-link {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    .movie-card {
+        max-width: 260px;
+    }
+}

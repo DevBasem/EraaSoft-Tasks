@@ -1,0 +1,475 @@
+@model IEnumerable<MovieApp.ViewModels.Admin.CinemaVM>
+@{
+    ViewData["Title"] = "Cinemas Management";
+}
+
+<div class="admin-page-header admin-fade-in">
+    <h1 class="admin-page-title">Cinemas Management</h1>
+    <a asp-action="Create" class="admin-btn admin-btn-primary admin-btn-sm">
+        <i class="fas fa-plus me-1"></i> Add New Cinema
+    </a>
+</div>
+
+<div class="row mb-4 admin-fade-in-delay-1">
+    <div class="col-12">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">All Cinemas</h5>
+                <div class="d-flex gap-2">
+                    <div class="input-group">
+                        <input type="text" id="cinemaSearch" class="form-control form-control-sm" placeholder="Search..." aria-label="Search">
+                        <button class="btn btn-sm btn-outline-secondary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="dropdown">
+                        <button class="admin-btn admin-btn-outline admin-btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-filter me-1"></i> Filter
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><h6 class="dropdown-header">Filter by City</h6></li>
+                            <li><a class="dropdown-item" href="#">All Cities</a></li>
+                            @foreach (var city in Model.Select(c => c.City).Distinct().Take(5))
+                            {
+                                <li><a class="dropdown-item" href="#">@city</a></li>
+                            }
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Sort By</h6></li>
+                            <li><a class="dropdown-item" href="#">Name (A-Z)</a></li>
+                            <li><a class="dropdown-item" href="#">Movie Count</a></li>
+                            <li><a class="dropdown-item" href="#">City</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="admin-card-body p-0">
+                <div class="admin-table-responsive">
+                    <table id="cinemasTable" class="admin-table admin-table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Logo</th>
+                                <th class="sortable" data-sort="name">Name</th>
+                                <th class="sortable" data-sort="location">Location</th>
+                                <th class="sortable" data-sort="city">City</th>
+                                <th class="sortable text-center" data-sort="movies">Movies</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr data-name="@item.Name.ToLower()" data-location="@item.Location.ToLower()" data-city="@item.City.ToLower()" data-movies="@item.MovieCount">
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.LogoPath))
+                                        {
+                                            <div class="cinema-logo-container">
+                                                <img src="@item.LogoPath" alt="@item.Name" class="cinema-logo"
+                                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                                <div class="cinema-logo-placeholder" style="display: none;">
+                                                    <i class="fas fa-film"></i>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="cinema-logo-placeholder">
+                                                <i class="fas fa-film"></i>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3 rounded-circle" style="width: 40px; height: 40px; background-color: rgba(10,132,255,0.15); display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-building admin-text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">@item.Name</div>
+                                                <div class="small admin-text-muted">ID: #@item.Id</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@item.Location</td>
+                                    <td>@item.City</td>
+                                    <td class="text-center">
+                                        <span class="admin-badge admin-badge-primary">@item.MovieCount</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-btn-group justify-content-end">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="admin-btn admin-btn-outline admin-btn-sm" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="admin-btn admin-btn-outline admin-btn-sm" title="Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="admin-btn admin-btn-outline admin-btn-sm admin-text-danger" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="admin-card-footer p-3 d-flex justify-content-between align-items-center">
+                <div>Showing <span class="fw-bold" id="displayedCinemaCount">@Model.Count()</span> of <span class="fw-bold">@Model.Count()</span> cinemas</div>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0" id="cinemaPagination">
+                        <!-- Pagination will be generated by JavaScript -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row admin-fade-in-delay-2">
+    <div class="col-md-6 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Cinema Locations</h5>
+            </div>
+            <div class="admin-card-body">
+                <div class="admin-chart-container" style="height: 250px;">
+                    <canvas id="cityDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Quick Actions</h5>
+            </div>
+            <div class="admin-card-body">
+                <div class="list-group mb-3">
+                    <a asp-action="Create" class="list-group-item list-group-item-action border-0 mb-2" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-plus-circle me-2 admin-text-primary"></i>
+                                Add New Cinema
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action border-0 mb-2" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-map-marker-alt me-2 admin-text-success"></i>
+                                View Cinema Map
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action border-0" style="background-color: rgba(255,255,255,0.05); color: var(--admin-text); border-radius: var(--admin-radius-sm);">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-file-export me-2 admin-text-warning"></i>
+                                Export Cinema List
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
+                </div>
+                <div class="alert" role="alert" style="background-color: rgba(10,132,255,0.1); color: var(--admin-text); border: 1px solid rgba(10,132,255,0.3); border-radius: var(--admin-radius-sm);">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-info-circle admin-text-primary" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <h6 class="alert-heading mb-1">Cinema Management</h6>
+                            <p class="mb-0 small">Cinemas are linked to movie showings. Make sure to keep the cinema information up to date.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Group cinemas by city
+        const cities = {};
+        @foreach(var cinema in Model) {
+            @:if (cities['@cinema.City']) { cities['@cinema.City']++; } else { cities['@cinema.City'] = 1; }
+        }
+        
+        const cityLabels = Object.keys(cities);
+        const cityData = cityLabels.map(city => cities[city]);
+        
+        // Cinema city distribution chart
+        const ctx = document.getElementById('cityDistributionChart').getContext('2d');
+        const cityDistributionChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: cityLabels,
+                datasets: [{
+                    data: cityData,
+                    backgroundColor: [
+                        'rgba(10, 132, 255, 0.7)',
+                        'rgba(48, 209, 88, 0.7)',
+                        'rgba(255, 214, 10, 0.7)',
+                        'rgba(94, 92, 230, 0.7)',
+                        'rgba(255, 55, 95, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(10, 132, 255, 1)',
+                        'rgba(48, 209, 88, 1)',
+                        'rgba(255, 214, 10, 1)',
+                        'rgba(94, 92, 230, 1)',
+                        'rgba(255, 55, 95, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Table sorting, searching and pagination functionality
+        const cinemasTable = document.getElementById('cinemasTable');
+        const tableRows = Array.from(cinemasTable.querySelectorAll('tbody tr'));
+        const totalRows = tableRows.length;
+        const cinemaSearch = document.getElementById('cinemaSearch');
+        const displayedCinemaCount = document.getElementById('displayedCinemaCount');
+        const cinemaPagination = document.getElementById('cinemaPagination');
+        
+        // Pagination settings
+        const rowsPerPage = 5;
+        let currentPage = 1;
+        let filteredRows = [...tableRows];
+        
+        // Initialize table sorting
+        let currentSortColumn = 'name';
+        let currentSortDirection = 'asc';
+        
+        // Function to sort table rows
+        function sortTableRows(column, direction) {
+            currentSortColumn = column;
+            currentSortDirection = direction;
+            
+            // Remove sort classes from all headers
+            document.querySelectorAll('.admin-table th.sortable').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+            
+            // Add sort class to current header
+            const currentHeader = document.querySelector(`th[data-sort="${column}"]`);
+            currentHeader.classList.add(`sort-${direction}`);
+            
+            // Sort the rows
+            filteredRows.sort((a, b) => {
+                let aValue, bValue;
+                
+                switch(column) {
+                    case 'name':
+                        aValue = a.getAttribute('data-name');
+                        bValue = b.getAttribute('data-name');
+                        break;
+                    case 'location':
+                        aValue = a.getAttribute('data-location');
+                        bValue = b.getAttribute('data-location');
+                        break;
+                    case 'city':
+                        aValue = a.getAttribute('data-city');
+                        bValue = b.getAttribute('data-city');
+                        break;
+                    case 'movies':
+                        aValue = parseInt(a.getAttribute('data-movies'));
+                        bValue = parseInt(b.getAttribute('data-movies'));
+                        break;
+                    default:
+                        aValue = a.querySelector('td:first-child').textContent.trim();
+                        bValue = b.querySelector('td:first-child').textContent.trim();
+                }
+                
+                if (direction === 'asc') {
+                    return aValue > bValue ? 1 : -1;
+                } else {
+                    return aValue < bValue ? 1 : -1;
+                }
+            });
+            
+            // Reset to first page and update display
+            currentPage = 1;
+            updateTableDisplay();
+        }
+        
+        // Function to filter table rows
+        function filterTableRows(searchTerm) {
+            searchTerm = searchTerm.toLowerCase();
+            
+            filteredRows = tableRows.filter(row => {
+                const name = row.getAttribute('data-name');
+                const location = row.getAttribute('data-location');
+                const city = row.getAttribute('data-city');
+                
+                return name.includes(searchTerm) || 
+                       location.includes(searchTerm) || 
+                       city.includes(searchTerm);
+            });
+            
+            // Sort filtered rows
+            sortTableRows(currentSortColumn, currentSortDirection);
+            
+            // Reset to first page and update display
+            currentPage = 1;
+            updateTableDisplay();
+        }
+        
+        // Function to generate pagination
+        function generatePagination() {
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+            cinemaPagination.innerHTML = '';
+            
+            // Previous button
+            const prevLi = document.createElement('li');
+            prevLi.classList.add('page-item');
+            if (currentPage === 1) prevLi.classList.add('disabled');
+            
+            const prevLink = document.createElement('a');
+            prevLink.classList.add('page-link');
+            prevLink.href = '#';
+            prevLink.textContent = 'Previous';
+            prevLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateTableDisplay();
+                }
+            });
+            
+            prevLi.appendChild(prevLink);
+            cinemaPagination.appendChild(prevLi);
+            
+            // Page numbers
+            const maxPageButtons = 3;
+            const startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+            const endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageLi = document.createElement('li');
+                pageLi.classList.add('page-item');
+                if (i === currentPage) pageLi.classList.add('active');
+                
+                const pageLink = document.createElement('a');
+                pageLink.classList.add('page-link');
+                pageLink.href = '#';
+                pageLink.textContent = i;
+                pageLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    currentPage = i;
+                    updateTableDisplay();
+                });
+                
+                pageLi.appendChild(pageLink);
+                cinemaPagination.appendChild(pageLi);
+            }
+            
+            // Next button
+            const nextLi = document.createElement('li');
+            nextLi.classList.add('page-item');
+            if (currentPage === totalPages || totalPages === 0) nextLi.classList.add('disabled');
+            
+            const nextLink = document.createElement('a');
+            nextLink.classList.add('page-link');
+            nextLink.href = '#';
+            nextLink.textContent = 'Next';
+            nextLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateTableDisplay();
+                }
+            });
+            
+            nextLi.appendChild(nextLink);
+            cinemaPagination.appendChild(nextLi);
+        }
+        
+        // Function to update the table display
+        function updateTableDisplay() {
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const visibleRows = filteredRows.slice(start, end);
+            
+            // Hide all rows
+            tableRows.forEach(row => {
+                row.style.display = 'none';
+            });
+            
+            // Show visible rows
+            visibleRows.forEach(row => {
+                row.style.display = '';
+            });
+            
+            // Update displayed count
+            displayedCinemaCount.textContent = filteredRows.length;
+            
+            // Update pagination
+            generatePagination();
+        }
+        
+        // Add event listeners for sorting
+        document.querySelectorAll('.admin-table th.sortable').forEach(headerCell => {
+            headerCell.addEventListener('click', () => {
+                const column = headerCell.getAttribute('data-sort');
+                const direction = headerCell.classList.contains('sort-asc') ? 'desc' : 'asc';
+                sortTableRows(column, direction);
+            });
+        });
+        
+        // Add event listener for search
+        cinemaSearch.addEventListener('input', (e) => {
+            filterTableRows(e.target.value);
+        });
+        
+        // Initial sort and display
+        sortTableRows('name', 'asc');
+    });
+</script>
+}
+
+<style>
+    .cinema-logo-container {
+        position: relative;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .cinema-logo {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        border-radius: var(--admin-radius);
+    }
+    
+    .cinema-logo-placeholder {
+        width: 50px;
+        height: 50px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: var(--admin-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: var(--admin-primary);
+    }
+</style>

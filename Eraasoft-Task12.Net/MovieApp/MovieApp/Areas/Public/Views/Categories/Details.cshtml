@@ -1,0 +1,189 @@
+@using MovieApp.ViewModels
+@model CategoryDetailsVM
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<!-- Category Hero -->
+<div class="category-hero category-@Model.Name.ToLower()">
+    <div class="container">
+        <div class="category-hero-content">
+            <h1>@Model.Name Movies</h1>
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <p>@Model.Description</p>
+            }
+            <div class="category-stats">
+                <div class="category-stat">
+                    <span class="category-stat-value">@Model.TotalMovies</span>
+                    <span class="category-stat-label">Movies</span>
+                </div>
+                <div class="category-stat">
+                    <span class="category-stat-value">@Model.NowShowingMovies</span>
+                    <span class="category-stat-label">Now Showing</span>
+                </div>
+                <div class="category-stat">
+                    <span class="category-stat-value">@Model.ComingSoonMovies</span>
+                    <span class="category-stat-label">Coming Soon</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Movies Section -->
+<div class="category-movies-section">
+    <div class="container">
+        @if (Model.Movies.Any())
+        {
+            <!-- Movies Filter -->
+            <div class="movies-filter">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All Movies</button>
+                    <button class="filter-tab" data-filter="showing">Now Showing</button>
+                    <button class="filter-tab" data-filter="coming">Coming Soon</button>
+                </div>
+                <div class="sort-controls">
+                    <label class="fw-semibold me-2">Sort by:</label>
+                    <select class="sort-select" id="sortSelect">
+                        <option value="title">Title</option>
+                        <option value="year">Release Year</option>
+                        <option value="price">Price</option>
+                        <option value="duration">Duration</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Movies Grid -->
+            <div class="movie-grid" id="moviesGrid">
+                @foreach (var movie in Model.Movies.OrderBy(m => m.Title))
+                {
+                    var availableTickets = movie.AvailableTickets;
+                    var ticketPercentage = movie.TotalTickets > 0 ? (double)availableTickets / movie.TotalTickets * 100 : 0;
+                    string statusClass = ticketPercentage > 50 ? "available" : ticketPercentage > 0 ? "limited" : "sold-out";
+                    string statusText = ticketPercentage > 50 ? "Available" : ticketPercentage > 0 ? "Limited" : "Sold Out";
+
+                    <div class="movie-card" 
+                         data-status="@movie.Status.ToString().ToLower()" 
+                         data-title="@movie.Title.ToLower()" 
+                         data-year="@movie.ReleaseYear" 
+                         data-price="@movie.Price" 
+                         data-duration="@movie.DurationMinutes">
+                        <img src="@movie.PosterUrl" class="movie-poster" alt="@movie.Title">
+                        <div class="movie-overlay"></div>
+                        <div class="movie-info">
+                            <h5 class="movie-title">@movie.Title</h5>
+                            <div class="movie-meta">
+                                <span><i class="fas fa-calendar-alt me-1"></i>@movie.ReleaseYear</span>
+                                <span><i class="fas fa-clock me-1"></i>@movie.DurationMinutes min</span>
+                            </div>
+                            
+                            <div class="badge @(movie.Status == MovieStatus.NowShowing ? "badge-status-showing" : "badge-status-coming") mb-2">
+                                @movie.Status.ToString().Replace("NowShowing", "Now Showing").Replace("ComingSoon", "Coming Soon")
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(movie.CinemaName))
+                            {
+                                <div class="badge bg-secondary mb-2">@movie.CinemaName</div>
+                            }
+                            
+                            <div class="movie-info-row mt-2">
+                                <span class="movie-price">$@movie.Price</span>
+                            </div>
+                            
+                            <div class="ticket-actions-row mt-2">
+                                <div class="ticket-status @statusClass">
+                                    <span class="status-indicator"></span>
+                                    @statusText (@availableTickets/@movie.TotalTickets)
+                                </div>
+                                <a asp-area="Public" asp-controller="Movies" asp-action="Details" asp-route-id="@movie.Id" class="btn-details">
+                                    <i class="fas fa-info-circle me-1"></i>Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fas fa-film"></i>
+                <h4>No movies in this category</h4>
+                <p>There are no movies available in the @Model.Name category at the moment.</p>
+                <a asp-area="Public" asp-controller="Categories" asp-action="Index" class="btn btn-outline-primary-custom">
+                    <i class="fas fa-arrow-left me-2"></i>Browse Other Categories
+                </a>
+            </div>
+        }
+
+        <!-- Back Button -->
+        <div class="text-center mt-5">
+            <a asp-area="Public" asp-controller="Categories" asp-action="Index" class="btn btn-outline-primary-custom btn-lg">
+                <i class="fas fa-arrow-left me-2"></i>Back to Categories
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            const sortSelect = document.getElementById('sortSelect');
+            const moviesGrid = document.getElementById('moviesGrid');
+
+            // Filter functionality
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Update active tab
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Filter movies
+                    const filter = this.dataset.filter;
+                    const cards = moviesGrid.children;
+
+                    Array.from(cards).forEach(card => {
+                        const status = card.dataset.status;
+                        let show = true;
+
+                        if (filter === 'showing' && status !== 'nowshowing') {
+                            show = false;
+                        } else if (filter === 'coming' && status !== 'comingsoon') {
+                            show = false;
+                        }
+
+                        card.style.display = show ? 'block' : 'none';
+                    });
+                });
+            });
+
+            // Sort functionality
+            if (sortSelect) {
+                sortSelect.addEventListener('change', function() {
+                    const cards = Array.from(moviesGrid.children);
+                    const sortValue = this.value;
+
+                    cards.sort((a, b) => {
+                        switch (sortValue) {
+                            case 'title':
+                                return a.dataset.title.localeCompare(b.dataset.title);
+                            case 'year':
+                                return parseInt(b.dataset.year) - parseInt(a.dataset.year);
+                            case 'price':
+                                return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                            case 'duration':
+                                return parseInt(b.dataset.duration) - parseInt(a.dataset.duration);
+                            default:
+                                return 0;
+                        }
+                    });
+
+                    // Reorder in DOM
+                    cards.forEach(card => moviesGrid.appendChild(card));
+                });
+            }
+        });
+    </script>
+}

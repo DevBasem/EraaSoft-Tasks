@@ -1,0 +1,273 @@
+@using MovieApp.ViewModels
+@model MoviesIndexVM
+@{
+    ViewData["Title"] = "Movies";
+}
+
+<div class="section-wrapper">
+    <div class="container py-4">
+        <!-- Page Header -->
+        <div class="section-heading" data-aos="fade-up" data-aos-duration="800">
+            <h2><i class="fas fa-film me-3"></i>Our Movie Collection</h2>
+            <p class="subtitle">Discover amazing movies from various genres and time periods</p>
+        </div>
+
+        <!-- Statistics Bar -->
+        <div class="row mb-4">
+            <div class="col-md-4" data-aos="slide-up" data-aos-duration="600" data-aos-delay="100">
+                <div class="card border-0">
+                    <div class="card-body text-center">
+                        <h4 class="text-primary-custom mb-1">@Model.TotalMovies</h4>
+                        <p class="mb-0">Total Movies</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="slide-up" data-aos-duration="600" data-aos-delay="200">
+                <div class="card border-0">
+                    <div class="card-body text-center">
+                        <h4 class="text-success mb-1">@Model.NowShowingCount</h4>
+                        <p class="mb-0">Now Showing</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="slide-up" data-aos-duration="600" data-aos-delay="300">
+                <div class="card border-0">
+                    <div class="card-body text-center">
+                        <h4 class="text-warning mb-1">@Model.ComingSoonCount</h4>
+                        <p class="mb-0">Coming Soon</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+            <form method="get" class="filter-controls">
+                <label class="fw-semibold me-2 text-light">Filter by:</label>
+                <select class="filter-select" name="status" id="statusFilter">
+                    <option value="">All Status</option>
+                    @if (Model.CurrentStatus == 1)
+                    {
+                        <option value="1" selected>Coming Soon</option>
+                    }
+                    else
+                    {
+                        <option value="1">Coming Soon</option>
+                    }
+                    @if (Model.CurrentStatus == 2)
+                    {
+                        <option value="2" selected>Now Showing</option>
+                    }
+                    else
+                    {
+                        <option value="2">Now Showing</option>
+                    }
+                </select>
+                <select class="filter-select" name="categoryId" id="categoryFilter">
+                    <option value="">All Categories</option>
+                    @foreach (var category in Model.Categories)
+                    {
+                        @if (Model.CurrentCategoryId == category.Id)
+                        {
+                            <option value="@category.Id" selected>@category.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    }
+                </select>
+                <select class="filter-select" name="sort" id="sortFilter">
+                    @if (Model.CurrentSort == "title" || string.IsNullOrEmpty(Model.CurrentSort))
+                    {
+                        <option value="title" selected>Sort by Title</option>
+                    }
+                    else
+                    {
+                        <option value="title">Sort by Title</option>
+                    }
+                    @if (Model.CurrentSort == "year")
+                    {
+                        <option value="year" selected>Sort by Year</option>
+                    }
+                    else
+                    {
+                        <option value="year">Sort by Year</option>
+                    }
+                    @if (Model.CurrentSort == "price")
+                    {
+                        <option value="price" selected>Sort by Price</option>
+                    }
+                    else
+                    {
+                        <option value="price">Sort by Price</option>
+                    }
+                    @if (Model.CurrentSort == "duration")
+                    {
+                        <option value="duration" selected>Sort by Duration</option>
+                    }
+                    else
+                    {
+                        <option value="duration">Sort by Duration</option>
+                    }
+                </select>
+            </form>
+        </div>
+
+        <!-- Movies Grid -->
+        @if (Model.Movies.Any())
+        {
+            <div class="movie-grid" id="moviesGrid">
+                @{
+                    int movieIndex = 0;
+                }
+                @foreach (var movie in Model.Movies)
+                {
+                    var availableTickets = movie.AvailableTickets;
+                    var ticketPercentage = movie.TotalTickets > 0 ? (double)availableTickets / movie.TotalTickets * 100 : 0;
+                    string statusClass = ticketPercentage > 50 ? "available" : ticketPercentage > 0 ? "limited" : "sold-out";
+                    string statusText = ticketPercentage > 50 ? "Available" : ticketPercentage > 0 ? "Limited" : "Sold Out";
+                    
+                    <div class="movie-card" 
+                        data-aos="fade-up" 
+                        data-aos-duration="600" 
+                        data-aos-delay="@((movieIndex * 100) % 800)">
+                        <img src="@movie.PosterUrl" class="movie-poster" alt="@movie.Title">
+                        <div class="movie-overlay"></div>
+                        <div class="movie-info">
+                            <h5 class="movie-title">@movie.Title</h5>
+                            <div class="movie-meta">
+                                <span><i class="fas fa-calendar-alt me-1"></i>@movie.ReleaseYear</span>
+                                <span><i class="fas fa-clock me-1"></i>@movie.DurationMinutes min</span>
+                            </div>
+                            
+                            <div class="badge @(movie.Status == MovieStatus.NowShowing ? "badge-status-showing" : "badge-status-coming") mb-2">
+                                @movie.Status.ToString().Replace("NowShowing", "Now Showing").Replace("ComingSoon", "Coming Soon")
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(movie.CategoryName))
+                            {
+                                <div class="badge bg-secondary mb-2">@movie.CategoryName</div>
+                            }
+                            
+                            <div class="movie-info-row mt-2">
+                                <span class="movie-price">$@movie.Price</span>
+                            </div>
+                            
+                            <div class="ticket-actions-row mt-2">
+                                <div class="ticket-status @statusClass">
+                                    <span class="status-indicator"></span>
+                                    @statusText (@availableTickets/@movie.TotalTickets)
+                                </div>
+                                <a asp-area="Public" asp-controller="Movies" asp-action="Details" asp-route-id="@movie.Id" class="btn-details">
+                                    <i class="fas fa-info-circle me-1"></i>Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    movieIndex++;
+                }
+            </div>
+
+            <!-- Pagination -->
+            @if (Model.Pager.TotalPages > 1)
+            {
+                <div class="pagination-wrapper" data-aos="fade-up" data-aos-duration="600">
+                    <div class="pagination-info">
+                        Showing @Model.Pager.StartRecord - @Model.Pager.EndRecord of @Model.Pager.TotalItems movies
+                    </div>
+                    
+                    <nav aria-label="Movies pagination">
+                        <ul class="pagination">
+                            @if (Model.Pager.CurrentPage > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" 
+                                       href="@Url.Action("Index", new { area = "Public", page = Model.Pager.CurrentPage - 1, categoryId = Model.CurrentCategoryId, status = Model.CurrentStatus, sort = Model.CurrentSort })">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                </li>
+                            }
+
+                            @foreach (var pageNumber in Model.Pager.Pages())
+                            {
+                                @if (pageNumber == Model.Pager.CurrentPage)
+                                {
+                                    <li class="page-item active">
+                                        <span class="page-link">@pageNumber</span>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" 
+                                           href="@Url.Action("Index", new { area = "Public", page = pageNumber, categoryId = Model.CurrentCategoryId, status = Model.CurrentStatus, sort = Model.CurrentSort })">
+                                            @pageNumber
+                                        </a>
+                                    </li>
+                                }
+                            }
+
+                            @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" 
+                                       href="@Url.Action("Index", new { area = "Public", page = Model.Pager.CurrentPage + 1, categoryId = Model.CurrentCategoryId, status = Model.CurrentStatus, sort = Model.CurrentSort })">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state" data-aos="fade-in" data-aos-duration="800">
+                <i class="fas fa-film"></i>
+                <h4>No movies found</h4>
+                <p>There are no movies available with the current filters. Try adjusting your search criteria.</p>
+                <a asp-area="Public" asp-action="Index" class="btn btn-outline-primary-custom mt-3">
+                    <i class="fas fa-redo me-1"></i>Clear Filters
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-submit form when filters change
+            const statusFilter = document.getElementById('statusFilter');
+            const categoryFilter = document.getElementById('categoryFilter');
+            const sortFilter = document.getElementById('sortFilter');
+            const form = document.querySelector('.filter-controls');
+
+            function submitForm() {
+                form.submit();
+            }
+
+            statusFilter.addEventListener('change', submitForm);
+            categoryFilter.addEventListener('change', submitForm);
+            sortFilter.addEventListener('change', submitForm);
+        });
+    </script>
+}

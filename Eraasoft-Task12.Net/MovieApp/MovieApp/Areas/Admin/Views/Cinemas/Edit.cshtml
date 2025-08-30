@@ -1,0 +1,247 @@
+@model MovieApp.ViewModels.Admin.CinemaCreateEditVM
+
+@{
+    ViewData["Title"] = "Edit Cinema";
+}
+
+<div class="admin-page-header admin-fade-in">
+    <h1 class="admin-page-title">Edit Cinema</h1>
+    <div class="admin-btn-group">
+        <a asp-action="Index" class="admin-btn admin-btn-outline admin-btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="row admin-fade-in-delay-1">
+    <div class="col-md-12">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="m-0 admin-widget-title">Cinema Details</h5>
+            </div>
+            <div class="admin-card-body">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label asp-for="Name" class="admin-label">Name</label>
+                                <input asp-for="Name" class="form-control" placeholder="Enter cinema name" required />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i> You can either keep the existing logo, provide a new URL, or upload a new image.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label asp-for="LogoFile" class="admin-label">Cinema Logo</label>
+                                <input asp-for="LogoFile" type="file" class="form-control" accept="image/*" id="logoFile" />
+                                <span asp-validation-for="LogoFile" class="text-danger small"></span>
+                                <small class="admin-text-muted">Recommended size: 400×400px, max 2MB</small>
+                                
+                                @if (!string.IsNullOrEmpty(Model.LogoPath))
+                                {
+                                    <div class="mt-2" id="currentLogoContainer">
+                                        <p class="mb-2">Current logo:</p>
+                                        <div class="logo-preview-container">
+                                            <img src="@Model.LogoPath" alt="@Model.Name" class="img-fluid shadow" 
+                                                 style="max-height: 150px; border-radius: var(--admin-radius);"
+                                                 onerror="this.style.display='none';document.getElementById('editFallbackIcon').style.display='flex';" />
+                                            <div id="editFallbackIcon" class="logo-fallback" style="display: none;">
+                                                <i class="fas fa-film"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div id="logoPreview" class="mt-2"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label asp-for="LogoPath" class="admin-label">Logo URL</label>
+                                <input asp-for="LogoPath" class="form-control" placeholder="Enter logo URL" id="logoUrl" />
+                                <span asp-validation-for="LogoPath" class="text-danger"></span>
+                                <small class="admin-text-muted">If you upload a file, this URL will be replaced</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label asp-for="Location" class="admin-label">Location</label>
+                                <input asp-for="Location" class="form-control" placeholder="Enter location" />
+                                <span asp-validation-for="Location" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label asp-for="City" class="admin-label">City</label>
+                                <input asp-for="City" class="form-control" placeholder="Enter city name" />
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="admin-form-group">
+                                <label asp-for="Address" class="admin-label">Address</label>
+                                <input asp-for="Address" class="form-control" placeholder="Enter full address" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label asp-for="PhoneNumber" class="admin-label">Phone Number</label>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="Enter phone number" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="admin-form-group">
+                                <label asp-for="Email" class="admin-label">Email</label>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="Enter email address" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="admin-btn admin-btn-primary">
+                            <i class="fas fa-save me-2"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="admin-btn admin-btn-outline">
+                            Cancel
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="admin-btn admin-btn-danger ms-auto">
+                            <i class="fas fa-trash-alt me-1"></i> Delete
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .logo-preview-container {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .logo-fallback {
+        width: 150px;
+        height: 150px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: var(--admin-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: var(--admin-primary);
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoFile = document.getElementById('logoFile');
+            const logoPreview = document.getElementById('logoPreview');
+            const logoUrl = document.getElementById('logoUrl');
+            const currentLogoContainer = document.getElementById('currentLogoContainer');
+            
+            if (logoFile) {
+                logoFile.addEventListener('change', function(event) {
+                    logoPreview.innerHTML = ''; // Clear previous preview
+                    
+                    if (event.target.files && event.target.files.length > 0) {
+                        const file = event.target.files[0];
+                        
+                        // Check file size (max 2MB)
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert('File size exceeds 2MB limit. Please choose a smaller file.');
+                            event.target.value = '';
+                            return;
+                        }
+                        
+                        // Clear the URL field when a file is selected
+                        if (logoUrl) {
+                            logoUrl.value = '';
+                        }
+                        
+                        // Hide current logo if exists
+                        if (currentLogoContainer) {
+                            currentLogoContainer.style.display = 'none';
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            logoPreview.innerHTML = `
+                                <div class="position-relative mt-2">
+                                    <p class="mb-2">New logo preview:</p>
+                                    <img src="${e.target.result}" alt="Logo Preview" class="img-fluid shadow" 
+                                         style="max-height: 150px; border-radius: var(--admin-radius);">
+                                    <div class="badge bg-success position-absolute" style="bottom: 10px; right: 10px;">
+                                        <i class="fas fa-check-circle me-1"></i> Selected
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // When LogoPath is changed, clear the file input and show URL preview
+            if (logoUrl && logoFile) {
+                logoUrl.addEventListener('input', function() {
+                    if (this.value.trim() !== '') {
+                        logoFile.value = '';
+                        logoPreview.innerHTML = '';
+                        
+                        // Hide current logo if exists
+                        if (currentLogoContainer) {
+                            currentLogoContainer.style.display = 'none';
+                        }
+                        
+                        // Show preview for URL if it's a valid image URL
+                        const url = this.value.trim();
+                        if (url.match(/\.(jpeg|jpg|gif|png|svg)$/) != null) {
+                            logoPreview.innerHTML = `
+                                <div class="position-relative mt-2">
+                                    <p class="mb-2">URL Preview:</p>
+                                    <div class="logo-preview-container">
+                                        <img src="${url}" alt="URL Preview" class="img-fluid shadow" 
+                                             style="max-height: 150px; border-radius: var(--admin-radius);"
+                                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                        <div class="logo-fallback" style="display: none;">
+                                            <i class="fas fa-film"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        // If URL is cleared, show the current logo again
+                        if (currentLogoContainer) {
+                            currentLogoContainer.style.display = 'block';
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

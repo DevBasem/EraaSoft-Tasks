@@ -1,0 +1,123 @@
+@using MovieApp.ViewModels
+@model ActorDetailsVM
+@{
+    ViewData["Title"] = Model.FullName;
+}
+
+<div class="section-wrapper">
+    <!-- Actor Profile Header -->
+    <div class="actor-profile-header">
+        <div class="container">
+            <div class="actor-profile-content">
+                <div class="actor-profile-image-wrapper">
+                    <img src="@Model.ProfileImagePath" 
+                         alt="@Model.FullName" 
+                         class="actor-profile-image"
+                         onerror="this.src='/images/default-actor.svg'">
+                </div>
+                <div class="actor-profile-info">
+                    <h1 data-aos="fade-up" data-aos-duration="800">@Model.FullName</h1>
+                    @if (!string.IsNullOrEmpty(Model.Bio))
+                    {
+                        <p class="actor-profile-bio" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                            @Model.Bio
+                        </p>
+                    }
+                    <div class="actor-stats" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
+                        <div class="actor-stat">
+                            <span class="actor-stat-value">@Model.TotalMovies</span>
+                            <span class="actor-stat-label">Total Movies</span>
+                        </div>
+                        <div class="actor-stat">
+                            <span class="actor-stat-value">@Model.NowShowingMovies</span>
+                            <span class="actor-stat-label">Now Showing</span>
+                        </div>
+                        <div class="actor-stat">
+                            <span class="actor-stat-value">@Model.ComingSoonMovies</span>
+                            <span class="actor-stat-label">Coming Soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filmography Section -->
+    @if (Model.Movies.Any())
+    {
+        <div class="filmography-section">
+            <div class="container">
+                <div class="section-heading" data-aos="fade-up" data-aos-duration="800">
+                    <h2>Filmography</h2>
+                    <p class="subtitle">Movies featuring @Model.FullName</p>
+                </div>
+
+                <div class="filmography-grid">
+                    @{
+                        int movieIndex = 0;
+                    }
+                    @foreach (var movie in Model.Movies)
+                    {
+                        <div class="filmography-item" 
+                             data-aos="fade-up" 
+                             data-aos-duration="600" 
+                             data-aos-delay="@((movieIndex * 100) % 800)">
+                            <img src="@movie.PosterUrl" 
+                                 alt="@movie.Title" 
+                                 class="filmography-poster"
+                                 onerror="this.src='/images/default-movie-poster.jpg'">
+                            <div class="filmography-info">
+                                <h5 class="filmography-title">
+                                    <a asp-area="Public" asp-controller="Movies" asp-action="Details" asp-route-id="@movie.Id">
+                                        @movie.Title
+                                    </a>
+                                </h5>
+                                <div class="filmography-year">@movie.ReleaseYear</div>
+                                @if (!string.IsNullOrEmpty(movie.CategoryName))
+                                {
+                                    <span class="filmography-category">@movie.CategoryName</span>
+                                }
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>@movie.DurationMinutes min
+                                    </small>
+                                    <br>
+                                    <small class="text-warning">
+                                        <i class="fas fa-dollar-sign me-1"></i>@movie.Price
+                                    </small>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="badge @(movie.Status == MovieStatus.NowShowing ? "badge-status-showing" : "badge-status-coming")">
+                                        @movie.Status.ToString().Replace("NowShowing", "Now Showing").Replace("ComingSoon", "Coming Soon")
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        movieIndex++;
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="filmography-section">
+            <div class="container">
+                <div class="empty-state" data-aos="fade-in" data-aos-duration="800">
+                    <i class="fas fa-film"></i>
+                    <h4>No Movies Found</h4>
+                    <p>@Model.FullName doesn't have any movies in our database yet.</p>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Back Button -->
+    <div class="container">
+        <div class="text-center mb-4" data-aos="fade-up" data-aos-duration="600">
+            <a asp-area="Public" asp-controller="Actors" asp-action="Index" class="btn btn-outline-primary-custom">
+                <i class="fas fa-arrow-left me-2"></i>Back to Actors
+            </a>
+        </div>
+    </div>
+</div>
