@@ -71,34 +71,40 @@ function initializeGlassmorphismEffects() {
 
 // AOS Helper functions
 function initializeAOSHelpers() {
-    // Refresh AOS on dynamic content changes
-    const observer = new MutationObserver(function(mutations) {
-        let shouldRefresh = false;
-        mutations.forEach(function(mutation) {
-            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                mutation.addedNodes.forEach(function(node) {
-                    if (node.nodeType === 1 && (node.hasAttribute('data-aos') || node.querySelector('[data-aos]'))) {
-                        shouldRefresh = true;
-                    }
-                });
+    // Check if screen is mobile (under 992px)
+    const isMobile = () => window.innerWidth < 992;
+    
+    // Only initialize AOS observers and helpers on desktop
+    if (!isMobile()) {
+        // Refresh AOS on dynamic content changes
+        const observer = new MutationObserver(function(mutations) {
+            let shouldRefresh = false;
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1 && (node.hasAttribute('data-aos') || node.querySelector('[data-aos]'))) {
+                            shouldRefresh = true;
+                        }
+                    });
+                }
+            });
+            if (shouldRefresh && typeof AOS !== 'undefined') {
+                AOS.refresh();
             }
         });
-        if (shouldRefresh) {
-            AOS.refresh();
-        }
-    });
 
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-    
-    // Ensure AOS triggers again when tab becomes visible
-    document.addEventListener('visibilitychange', function() {
-        if (!document.hidden && typeof AOS !== 'undefined') {
-            AOS.refresh();
-        }
-    });
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        // Ensure AOS triggers again when tab becomes visible
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
+        });
+    }
 }
 
 // Lazy loading for images
@@ -173,8 +179,8 @@ function triggerSearch(input) {
             item.style.display = item.classList.contains('actor-item') ? 'flex' : 'block';
             visibleCount++;
             
-            // Re-trigger AOS animation for filtered items
-            if (typeof AOS !== 'undefined' && item.hasAttribute('data-aos')) {
+            // Re-trigger AOS animation for filtered items only on desktop
+            if (window.innerWidth >= 992 && typeof AOS !== 'undefined' && item.hasAttribute('data-aos')) {
                 item.classList.remove('aos-animate');
                 setTimeout(() => {
                     item.classList.add('aos-animate');
@@ -188,8 +194,8 @@ function triggerSearch(input) {
     // Show/hide no results message
     updateNoResultsMessage(targetGrid.parentElement, visibleCount === 0 && searchTerm !== '');
     
-    // Refresh AOS after search
-    if (typeof AOS !== 'undefined') {
+    // Refresh AOS after search only on desktop
+    if (window.innerWidth >= 992 && typeof AOS !== 'undefined') {
         setTimeout(() => {
             AOS.refresh();
         }, 100);
@@ -214,8 +220,13 @@ function updateNoResultsMessage(container, show) {
     if (show && !noResultsMsg) {
         noResultsMsg = document.createElement('div');
         noResultsMsg.className = 'empty-state no-results-message';
-        noResultsMsg.setAttribute('data-aos', 'fade-in');
-        noResultsMsg.setAttribute('data-aos-duration', '600');
+        
+        // Only add AOS attributes on desktop
+        if (window.innerWidth >= 992) {
+            noResultsMsg.setAttribute('data-aos', 'fade-in');
+            noResultsMsg.setAttribute('data-aos-duration', '600');
+        }
+        
         noResultsMsg.innerHTML = `
             <i class="fas fa-search"></i>
             <h4>No results found</h4>
@@ -223,8 +234,8 @@ function updateNoResultsMessage(container, show) {
         `;
         container.appendChild(noResultsMsg);
         
-        // Trigger AOS animation for the new element
-        if (typeof AOS !== 'undefined') {
+        // Trigger AOS animation for the new element only on desktop
+        if (window.innerWidth >= 992 && typeof AOS !== 'undefined') {
             AOS.refresh();
         }
     } else if (!show && noResultsMsg) {
@@ -293,9 +304,10 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Refresh AOS on window resize
+// Refresh AOS on window resize with mobile check
 window.addEventListener('resize', debounce(function() {
-    if (typeof AOS !== 'undefined') {
+    // Only refresh AOS on desktop
+    if (window.innerWidth >= 992 && typeof AOS !== 'undefined') {
         AOS.refresh();
     }
 }, 250));
@@ -305,7 +317,8 @@ window.MovieApp = {
     toggleFavorite,
     debounce,
     refreshAOS: function() {
-        if (typeof AOS !== 'undefined') {
+        // Only refresh AOS on desktop
+        if (window.innerWidth >= 992 && typeof AOS !== 'undefined') {
             AOS.refresh();
         }
     }
@@ -328,6 +341,15 @@ document.head.insertAdjacentHTML('beforeend', `
     @media (prefers-reduced-motion: reduce) {
         .navbar, .navbar-scrolled {
             transition: none;
+        }
+    }
+    
+    /* Mobile optimizations - remove AOS-related transitions on mobile */
+    @media (max-width: 991.98px) {
+        [data-aos] {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
         }
     }
 </style>

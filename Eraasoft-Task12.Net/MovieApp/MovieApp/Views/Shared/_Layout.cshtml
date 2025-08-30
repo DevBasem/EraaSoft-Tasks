@@ -131,12 +131,41 @@
     <!-- AOS JavaScript -->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true,
-            offset: 50,
-            delay: 100
+        // Initialize AOS with mobile-responsive settings
+        function initializeAOS() {
+            // Check if screen is mobile or tablet (under 992px)
+            const isMobile = window.innerWidth < 992;
+            
+            if (isMobile) {
+                // Disable AOS on mobile/tablet for better performance
+                if (typeof AOS !== 'undefined') {
+                    AOS.init({
+                        disable: true // Completely disable animations on mobile
+                    });
+                }
+            } else {
+                // Enable AOS on desktop
+                if (typeof AOS !== 'undefined') {
+                    AOS.init({
+                        duration: 800,
+                        easing: 'ease-in-out',
+                        once: true,
+                        offset: 50,
+                        delay: 100,
+                        disable: false
+                    });
+                }
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeAOS);
+        
+        // Re-initialize on window resize with debounce
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(initializeAOS, 250);
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

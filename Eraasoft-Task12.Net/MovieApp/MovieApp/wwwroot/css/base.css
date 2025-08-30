@@ -264,15 +264,40 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s ease;
 }
 
 .navbar-toggler:focus {
     box-shadow: 0 0 0 3px rgba(10,132,255,0.25);
+    outline: none;
+}
+
+.navbar-toggler:hover {
+    background-color: rgba(255,255,255,0.08);
 }
 
 .navbar-toggler-icon {
     width: 1.2em;
     height: 1.2em;
+}
+
+/* Navbar Collapse - Clean and Simple */
+.navbar-collapse {
+    /* Remove all backgrounds, borders, and heavy styling */
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin-top: 0 !important;
+    /* Smooth collapse transition */
+    transition: all 0.3s ease !important;
+}
+
+/* Ensure consistent nav styling across all devices */
+.navbar-nav {
+    gap: 0.3rem;
+    padding: 0;
+    margin: 0;
 }
 
 /* Hero */
@@ -560,7 +585,7 @@ h1, h2, h3, h4, h5, h6 {
     padding-top: 5rem;
 }
 
-/* Responsive */
+/* Mobile optimizations for AOS and animations */
 @media (max-width: 991.98px) {
     .pill-nav {
         width: 95%;
@@ -569,16 +594,50 @@ h1, h2, h3, h4, h5, h6 {
         padding: 0.5rem 1rem;
     }
     
+    /* Medium screens (tablets) - keep blur background */
     .navbar-collapse {
-        background: rgba(18,18,18,0.98);
-        border-radius: 15px;
-        padding: 1rem;
-        margin-top: 0.75rem;
-        border: 1px solid rgba(255,255,255,0.05);
+        background: rgba(18,18,18,0.85) !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        border-radius: 12px !important;
+        padding: 0.75rem !important;
+        margin-top: 0.5rem !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        /* Ensure Bootstrap animations work properly */
+        transition: none !important; /* Let Bootstrap handle the transition */
+    }
+    
+    /* Ensure Bootstrap collapse animation works */
+    .navbar-collapse.collapsing {
+        transition: height 0.3s ease !important;
+        overflow: hidden !important;
     }
     
     .navbar-nav {
-        padding: 0.5rem 0;
+        padding: 0.25rem 0;
+        gap: 0.1rem;
+    }
+    
+    /* Clean nav item styling for mobile */
+    .nav-item {
+        margin: 0;
+    }
+    
+    .nav-link {
+        padding: 0.7rem 1rem !important;
+        margin: 0.05rem 0 !important;
+        border-radius: 8px !important;
+        transition: all 0.2s ease !important;
+        background: transparent !important;
+    }
+    
+    .nav-link:hover {
+        background: rgba(10,132,255,0.1) !important;
+        transform: none !important;
+    }
+    
+    .nav-link.active {
+        background: rgba(10,132,255,0.15) !important;
     }
     
     .navbar-brand::after {
@@ -588,6 +647,41 @@ h1, h2, h3, h4, h5, h6 {
     /* Update spacing variable */
     :root {
         --nav-spacing: 20px;
+    }
+    
+    /* Disable AOS animations on mobile/tablet */
+    [data-aos] {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+    
+    /* Disable hover effects on mobile */
+    .card:hover {
+        transform: none;
+        box-shadow: var(--shadow-light);
+    }
+    
+    .btn:hover {
+        transform: none;
+    }
+    
+    .movie-card:hover {
+        transform: none !important;
+        box-shadow: var(--shadow-light) !important;
+    }
+    
+    .movie-card:hover .movie-poster {
+        transform: none !important;
+    }
+    
+    .movie-card:hover .movie-info {
+        transform: none !important;
+    }
+    
+    /* Disable nav-link hover transforms on mobile */
+    .nav-link:hover i {
+        transform: none !important;
     }
 }
 
@@ -604,6 +698,30 @@ h1, h2, h3, h4, h5, h6 {
     .pill-nav {
         width: 92%;
         margin-top: 8px;
+    }
+    
+    /* Mobile screens - remove background and blur */
+    .navbar-collapse {
+        background: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 0.4rem 0 !important;
+        margin-top: 0.4rem !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    
+    .nav-link {
+        padding: 0.6rem 0.8rem !important;
+        border-radius: 6px !important;
+    }
+    
+    .nav-link:hover {
+        background: rgba(10,132,255,0.08) !important;
+    }
+    
+    .nav-link.active {
+        background: rgba(10,132,255,0.12) !important;
     }
     
     /* Update spacing variable */
@@ -626,6 +744,15 @@ h1, h2, h3, h4, h5, h6 {
         min-height: 100%;
         object-fit: cover;
     }
+    
+    /* Additional mobile optimizations for movie cards */
+    .movie-card {
+        border-radius: var(--border-radius) !important; /* Smaller radius on mobile */
+    }
+    
+    .movie-info {
+        padding: 1rem !important; /* Reduce padding on mobile */
+    }
 }
 
 @media (max-width: 576px) {
@@ -634,6 +761,44 @@ h1, h2, h3, h4, h5, h6 {
         margin-top: 5px;
         height: auto;
         min-height: var(--nav-height);
+    }
+    
+    /* Extra small screens - clean mobile menu */
+    .navbar-collapse {
+        background: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 0.3rem 0 !important;
+        margin-top: 0.3rem !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 0.6rem !important;
+        border-radius: 6px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .nav-link:hover {
+        background: rgba(10,132,255,0.06) !important;
+    }
+    
+    .nav-link.active {
+        background: rgba(10,132,255,0.1) !important;
+    }
+    
+    /* Additional small screen optimizations */
+    .movie-card {
+        border-radius: 12px !important;
+    }
+    
+    .movie-info {
+        padding: 0.8rem !important;
+    }
+    
+    .movie-title {
+        font-size: 1rem !important;
     }
 }
 
@@ -650,6 +815,29 @@ h1, h2, h3, h4, h5, h6 {
         background-size: cover;
         background-position: center;
     }
+    
+    /* Disable all animations for reduced motion users */
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    [data-aos] {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+    
+    /* Also disable navbar collapse animation */
+    .navbar-collapse {
+        transition: none !important;
+    }
+    
+    .navbar-collapse.collapsing {
+        transition: none !important;
+    }
 }
 
 /* Rellax Specific Styles */
@@ -664,7 +852,6 @@ h1, h2, h3, h4, h5, h6 {
     /* Prevent Rellax from breaking backdrop-filter */
     transform-style: preserve-3d;
     backface-visibility: hidden;
-    will-change: transform;
 }
 
 /* Prevent Rellax from interfering with button backdrop filters */
@@ -672,4 +859,35 @@ h1, h2, h3, h4, h5, h6 {
     /* Ensure backdrop-filter works with Rellax */
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
+}
+
+/* Fix Bootstrap Navbar Collapse Animation Issues */
+.collapsing {
+    transition: height 0.3s ease !important;
+    overflow: hidden !important;
+}
+
+/* Ensure smooth navbar toggler interaction */
+.navbar-toggler[aria-expanded="true"] {
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* Prevent any unwanted margin/padding that could cause stuttering */
+.navbar-nav .nav-item:first-child .nav-link {
+    margin-top: 0 !important;
+}
+
+.navbar-nav .nav-item:last-child .nav-link {
+    margin-bottom: 0 !important;
+}
+
+/* Desktop navbar collapse should remain invisible */
+@media (min-width: 992px) {
+    .navbar-collapse {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        backdrop-filter: none !important;
+    }
 }
