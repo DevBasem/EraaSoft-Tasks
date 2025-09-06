@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApp.DataAccess;
 using MovieApp.Models;
+using MovieApp.Utilities;
 using MovieApp.ViewModels.Admin;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,6 +45,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
             if (category == null)
             {
+                ToastNotification.Error(TempData, "Category not found");
                 return NotFound();
             }
 
@@ -84,10 +86,12 @@ namespace MovieApp.Areas.Admin.Controllers
 
                 _context.Categories.Add(category);
                 await _context.SaveChangesAsync();
-
+                
+                ToastNotification.Success(TempData, $"Category '{category.Name}' was created successfully");
                 return RedirectToAction(nameof(Index));
             }
-
+            
+            ToastNotification.Error(TempData, "Please correct the errors and try again");
             return View(viewModel);
         }
 
@@ -97,6 +101,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
             if (category == null)
             {
+                ToastNotification.Error(TempData, "Category not found");
                 return NotFound();
             }
 
@@ -116,6 +121,7 @@ namespace MovieApp.Areas.Admin.Controllers
         {
             if (id != viewModel.Id)
             {
+                ToastNotification.Error(TempData, "Invalid category ID");
                 return NotFound();
             }
 
@@ -127,6 +133,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
                     if (category == null)
                     {
+                        ToastNotification.Error(TempData, "Category not found");
                         return NotFound();
                     }
 
@@ -135,21 +142,26 @@ namespace MovieApp.Areas.Admin.Controllers
 
                     _context.Update(category);
                     await _context.SaveChangesAsync();
+                    
+                    ToastNotification.Success(TempData, $"Category '{category.Name}' was updated successfully");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!CategoryExists(viewModel.Id))
                     {
+                        ToastNotification.Error(TempData, "Category not found");
                         return NotFound();
                     }
                     else
                     {
+                        ToastNotification.Error(TempData, "An error occurred while updating the category");
                         throw;
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
-
+            
+            ToastNotification.Error(TempData, "Please correct the errors and try again");
             return View(viewModel);
         }
 
@@ -161,6 +173,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
             if (category == null)
             {
+                ToastNotification.Error(TempData, "Category not found");
                 return NotFound();
             }
 
@@ -183,8 +196,14 @@ namespace MovieApp.Areas.Admin.Controllers
             
             if (category != null)
             {
+                var categoryName = category.Name;
                 _context.Categories.Remove(category);
                 await _context.SaveChangesAsync();
+                ToastNotification.Success(TempData, $"Category '{categoryName}' was deleted successfully");
+            }
+            else
+            {
+                ToastNotification.Error(TempData, "Category not found");
             }
 
             return RedirectToAction(nameof(Index));

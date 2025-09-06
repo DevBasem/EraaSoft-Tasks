@@ -1,0 +1,87 @@
+@using MovieApp.Utilities
+@{
+    var toastMessage = TempData["ToastMessage"] as string;
+    var toastType = TempData["ToastType"] as string ?? "success";
+    var toastTitle = TempData["ToastTitle"] as string ?? "Notification";
+    var toastIcon = toastType switch
+    {
+        "success" => "fas fa-check-circle",
+        "danger" => "fas fa-exclamation-circle",
+        "warning" => "fas fa-exclamation-triangle",
+        "info" => "fas fa-info-circle",
+        _ => "fas fa-bell"
+    };
+}
+
+@if (!string.IsNullOrEmpty(toastMessage))
+{
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="adminToast" class="toast admin-toast text-white" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+            <div class="toast-header bg-@toastType text-white">
+                <i class="@toastIcon me-2 text-white"></i>
+                <strong class="me-auto text-white fw-bold">@toastTitle</strong>
+                <small class="text-white">Just now</small>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body admin-toast-body text-white">
+                @toastMessage
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toast = document.getElementById('adminToast');
+            if (toast) {
+                // Force opacity to 1 and add dark bg class
+                toast.style.opacity = '1';
+                toast.style.backgroundColor = '#1e1e1e';
+                toast.classList.add('bg-dark', 'text-white');
+                
+                // Make sure the header has proper contrast
+                const toastHeader = toast.querySelector('.toast-header');
+                if (toastHeader) {
+                    // Add a subtle text shadow for better readability
+                    toastHeader.style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.3)';
+                    
+                    // Increase font weight for better visibility
+                    const headerTitle = toastHeader.querySelector('strong');
+                    if (headerTitle) {
+                        headerTitle.classList.add('fw-bold');
+                    }
+                }
+                
+                // Make sure the body has the correct color
+                const toastBody = toast.querySelector('.toast-body');
+                if (toastBody) {
+                    toastBody.style.backgroundColor = '#1e1e1e';
+                    toastBody.style.color = '#ffffff';
+                }
+                
+                // Initialize Bootstrap toast
+                const bootstrapToast = new bootstrap.Toast(toast, {
+                    autohide: true,
+                    delay: 5000
+                });
+                
+                // Add event listener for when toast is hidden
+                toast.addEventListener('hidden.bs.toast', function() {
+                    // Remove the toast from DOM after it's hidden
+                    setTimeout(function() {
+                        const container = toast.closest('.toast-container');
+                        if (container) {
+                            container.remove();
+                        }
+                    }, 300);
+                });
+                
+                // Make sure Bootstrap doesn't mess with our opacity
+                toast.addEventListener('show.bs.toast', function() {
+                    toast.style.opacity = '1';
+                });
+                
+                bootstrapToast.show();
+            }
+        });
+    </script>
+}

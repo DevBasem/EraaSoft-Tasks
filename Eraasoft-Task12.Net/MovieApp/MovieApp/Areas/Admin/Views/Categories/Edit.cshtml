@@ -20,7 +20,7 @@
                 <h5 class="m-0 admin-widget-title">Category Details</h5>
             </div>
             <div class="admin-card-body">
-                <form asp-action="Edit" method="post">
+                <form asp-action="Edit" method="post" data-validate-on-blur="true">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
                     <input type="hidden" asp-for="Id" />
                     
@@ -56,4 +56,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <partial name="_AdminValidationScript" />
 }

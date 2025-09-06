@@ -20,15 +20,15 @@
                 <h5 class="m-0 admin-widget-title">Actor Details</h5>
             </div>
             <div class="admin-card-body">
-                <form asp-action="Create" method="post" enctype="multipart/form-data">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+                <form asp-action="Create" method="post" enctype="multipart/form-data" data-validate-on-blur="true" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-4 validation-summary-errors"></div>
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="admin-form-group">
                                 <label asp-for="FullName" class="admin-label">Full Name</label>
                                 <input asp-for="FullName" class="form-control" placeholder="Enter actor's full name" required />
-                                <span asp-validation-for="FullName" class="text-danger"></span>
+                                <span asp-validation-for="FullName" class="text-danger field-validation-error"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -43,7 +43,7 @@
                             <div class="admin-form-group">
                                 <label asp-for="ProfileImageFile" class="admin-label">Profile Image</label>
                                 <input asp-for="ProfileImageFile" type="file" class="form-control" accept="image/*" id="profileImageFile" />
-                                <span asp-validation-for="ProfileImageFile" class="text-danger small"></span>
+                                <span asp-validation-for="ProfileImageFile" class="text-danger field-validation-error"></span>
                                 <small class="admin-text-muted">Recommended size: 400×600px, max 2MB</small>
                                 <div id="imagePreview" class="mt-2"></div>
                             </div>
@@ -52,7 +52,7 @@
                             <div class="admin-form-group">
                                 <label asp-for="ProfileImagePath" class="admin-label">Profile Image URL (optional if file uploaded)</label>
                                 <input asp-for="ProfileImagePath" class="form-control" placeholder="Enter image URL" id="profileImageUrl" />
-                                <span asp-validation-for="ProfileImagePath" class="text-danger"></span>
+                                <span asp-validation-for="ProfileImagePath" class="text-danger field-validation-error"></span>
                                 <small class="admin-text-muted">If you upload a file, this URL will be ignored</small>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                     <div class="admin-form-group mb-4">
                         <label asp-for="Bio" class="admin-label">Biography</label>
                         <textarea asp-for="Bio" class="form-control" rows="4" placeholder="Enter actor biography"></textarea>
-                        <span asp-validation-for="Bio" class="text-danger"></span>
+                        <span asp-validation-for="Bio" class="text-danger field-validation-error"></span>
                     </div>
                     
                     <div class="d-flex gap-2 mt-4">
@@ -80,6 +80,7 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <partial name="_AdminValidationScript" />
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const profileImageFile = document.getElementById('profileImageFile');

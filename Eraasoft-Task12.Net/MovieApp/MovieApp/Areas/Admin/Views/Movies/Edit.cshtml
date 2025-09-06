@@ -17,7 +17,7 @@
                 <h5 class="m-0 admin-widget-title">Movie Information</h5>
             </div>
             <div class="admin-card-body">
-                <form asp-action="Edit" method="post" enctype="multipart/form-data" id="movieForm">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data" id="movieForm" data-validate-on-blur="true">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
                     <input type="hidden" asp-for="Id" />
                     
@@ -256,7 +256,8 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_AdminValidationScript" />
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {

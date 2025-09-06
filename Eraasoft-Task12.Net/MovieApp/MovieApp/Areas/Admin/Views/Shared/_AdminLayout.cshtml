@@ -203,8 +203,13 @@
         </footer>
     </div>
 
+    <!-- Toast Notification -->
+    <partial name="_ToastNotification" />
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -235,6 +240,40 @@
                     }
                 }
             });
+            
+            // Apply validation to all forms automatically
+            if ($.validator) {
+                $("form[data-validate-on-blur='true']").each(function () {
+                    var $form = $(this);
+                    
+                    if ($form.length > 0 && $form.data('validator')) {
+                        // Configure validation to trigger on blur
+                        $form.data('validator').settings.onfocusout = function (element) {
+                            this.element(element);
+                        };
+
+                        // Validate on keyup after a delay
+                        $form.data('validator').settings.onkeyup = function (element, event) {
+                            var self = this;
+                            clearTimeout($(element).data("timeout"));
+                            $(element).data("timeout", setTimeout(function () {
+                                self.element(element);
+                            }, 500));
+                        };
+                        
+                        // Update error styling immediately
+                        $form.data('validator').settings.highlight = function (element, errorClass, validClass) {
+                            $(element).addClass(errorClass).removeClass(validClass);
+                            $(element).closest('.admin-form-group').addClass('has-error');
+                        };
+                        
+                        $form.data('validator').settings.unhighlight = function (element, errorClass, validClass) {
+                            $(element).removeClass(errorClass).addClass(validClass);
+                            $(element).closest('.admin-form-group').removeClass('has-error');
+                        };
+                    }
+                });
+            }
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

@@ -17,15 +17,15 @@
                 <h5 class="m-0 admin-widget-title">Movie Information</h5>
             </div>
             <div class="admin-card-body">
-                <form asp-action="Create" method="post" enctype="multipart/form-data" id="movieForm">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+                <form asp-action="Create" method="post" enctype="multipart/form-data" id="movieForm" data-validate-on-blur="true" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-4 validation-summary-errors"></div>
                     
                     <div class="row mb-4">
                         <div class="col-md-12">
                             <div class="admin-form-group">
                                 <label asp-for="Title" class="admin-label">Title</label>
-                                <input asp-for="Title" class="admin-input" placeholder="Enter movie title" />
-                                <span asp-validation-for="Title" class="text-danger small"></span>
+                                <input asp-for="Title" class="admin-input form-control" placeholder="Enter movie title" required />
+                                <span asp-validation-for="Title" class="text-danger field-validation-error"></span>
                             </div>
                         </div>
                     </div>
@@ -34,21 +34,21 @@
                         <div class="col-md-6">
                             <div class="admin-form-group">
                                 <label asp-for="CategoryId" class="admin-label">Category</label>
-                                <select asp-for="CategoryId" class="admin-select">
+                                <select asp-for="CategoryId" class="admin-select form-control">
                                     <option value="">-- Select Category --</option>
                                     @foreach (var category in Model.Categories)
                                     {
                                         <option value="@category.Id">@category.Name</option>
                                     }
                                 </select>
-                                <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                                <span asp-validation-for="CategoryId" class="text-danger field-validation-error"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="admin-form-group">
                                 <label asp-for="Status" class="admin-label">Status</label>
-                                <select asp-for="Status" asp-items="Html.GetEnumSelectList<MovieApp.Models.MovieStatus>()" class="admin-select"></select>
-                                <span asp-validation-for="Status" class="text-danger small"></span>
+                                <select asp-for="Status" asp-items="Html.GetEnumSelectList<MovieApp.Models.MovieStatus>()" class="admin-select form-control"></select>
+                                <span asp-validation-for="Status" class="text-danger field-validation-error"></span>
                             </div>
                         </div>
                     </div>
@@ -57,15 +57,15 @@
                         <div class="col-md-6">
                             <div class="admin-form-group">
                                 <label asp-for="ReleaseYear" class="admin-label">Release Year</label>
-                                <input asp-for="ReleaseYear" class="admin-input" placeholder="Release Year" />
-                                <span asp-validation-for="ReleaseYear" class="text-danger small"></span>
+                                <input asp-for="ReleaseYear" class="admin-input form-control" placeholder="Release Year" />
+                                <span asp-validation-for="ReleaseYear" class="text-danger field-validation-error"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="admin-form-group">
                                 <label asp-for="DurationMinutes" class="admin-label">Duration (minutes)</label>
-                                <input asp-for="DurationMinutes" class="admin-input" placeholder="Duration in minutes" />
-                                <span asp-validation-for="DurationMinutes" class="text-danger small"></span>
+                                <input asp-for="DurationMinutes" class="admin-input form-control" placeholder="Duration in minutes" />
+                                <span asp-validation-for="DurationMinutes" class="text-danger field-validation-error"></span>
                             </div>
                         </div>
                     </div>
@@ -74,8 +74,8 @@
                         <div class="col-md-12">
                             <div class="admin-form-group">
                                 <label asp-for="Description" class="admin-label">Description</label>
-                                <textarea asp-for="Description" class="admin-input" rows="4" placeholder="Movie description"></textarea>
-                                <span asp-validation-for="Description" class="text-danger small"></span>
+                                <textarea asp-for="Description" class="admin-input form-control" rows="4" placeholder="Movie description"></textarea>
+                                <span asp-validation-for="Description" class="text-danger field-validation-error"></span>
                             </div>
                         </div>
                     </div>
@@ -93,7 +93,7 @@
                             <div class="admin-form-group">
                                 <label asp-for="PosterFile" class="admin-label">Movie Poster</label>
                                 <input type="file" id="PosterFile" name="PosterFile" class="form-control" accept="image/*" />
-                                <span asp-validation-for="PosterFile" class="text-danger small"></span>
+                                <span asp-validation-for="PosterFile" class="text-danger field-validation-error"></span>
                                 <small class="admin-text-muted">Recommended size: 800×1200px, max 2MB</small>
                                 <div id="posterPreview" class="mt-2"></div>
                             </div>
@@ -101,8 +101,8 @@
                         <div class="col-md-6">
                             <div class="admin-form-group">
                                 <label asp-for="PosterUrl" class="admin-label">Poster URL (optional if file uploaded)</label>
-                                <input asp-for="PosterUrl" id="PosterUrl" class="admin-input" placeholder="Or provide a URL to an image" />
-                                <span asp-validation-for="PosterUrl" class="text-danger small"></span>
+                                <input asp-for="PosterUrl" id="PosterUrl" class="admin-input form-control" placeholder="Or provide a URL to an image" />
+                                <span asp-validation-for="PosterUrl" class="text-danger field-validation-error"></span>
                                 <small class="admin-text-muted">If you upload a file, this URL will be ignored</small>
                             </div>
                         </div>
@@ -123,8 +123,8 @@
                         <div class="col-md-12">
                             <div class="admin-form-group">
                                 <label asp-for="TrailerUrl" class="admin-label">Trailer URL (Optional)</label>
-                                <input asp-for="TrailerUrl" class="admin-input" placeholder="YouTube or Vimeo URL" />
-                                <span asp-validation-for="TrailerUrl" class="text-danger small"></span>
+                                <input asp-for="TrailerUrl" class="admin-input form-control" placeholder="YouTube or Vimeo URL" />
+                                <span asp-validation-for="TrailerUrl" class="text-danger field-validation-error"></span>
                                 <small class="admin-text-muted">YouTube or Vimeo URL for the movie trailer</small>
                             </div>
                         </div>
@@ -142,23 +142,23 @@
                         <div class="col-md-4">
                             <div class="admin-form-group">
                                 <label asp-for="Price" class="admin-label">Ticket Price</label>
-                                <input asp-for="Price" class="admin-input" placeholder="0.00" />
-                                <span asp-validation-for="Price" class="text-danger small"></span>
+                                <input asp-for="Price" class="admin-input form-control" placeholder="0.00" />
+                                <span asp-validation-for="Price" class="text-danger field-validation-error"></span>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="admin-form-group">
                                 <label asp-for="TotalTickets" class="admin-label">Total Tickets</label>
-                                <input asp-for="TotalTickets" class="admin-input" placeholder="0" id="totalTickets" />
-                                <span asp-validation-for="TotalTickets" class="text-danger small"></span>
+                                <input asp-for="TotalTickets" class="admin-input form-control" placeholder="0" id="totalTickets" />
+                                <span asp-validation-for="TotalTickets" class="text-danger field-validation-error"></span>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="admin-form-group">
                                 <label asp-for="ReservedTickets" class="admin-label">Reserved Tickets</label>
-                                <input asp-for="ReservedTickets" class="admin-input" placeholder="0" id="reservedTickets" />
-                                <span asp-validation-for="ReservedTickets" class="text-danger small"></span>
-                                <span id="ticketsError" class="text-danger small"></span>
+                                <input asp-for="ReservedTickets" class="admin-input form-control" placeholder="0" id="reservedTickets" />
+                                <span asp-validation-for="ReservedTickets" class="text-danger field-validation-error"></span>
+                                <span id="ticketsError" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -167,14 +167,14 @@
                         <div class="col-md-12">
                             <div class="admin-form-group">
                                 <label asp-for="CinemaId" class="admin-label">Cinema</label>
-                                <select asp-for="CinemaId" class="admin-select">
+                                <select asp-for="CinemaId" class="admin-select form-control">
                                     <option value="">-- Select Cinema --</option>
                                     @foreach (var cinema in Model.Cinemas)
                                     {
                                         <option value="@cinema.Id">@cinema.Name - @cinema.City</option>
                                     }
                                 </select>
-                                <span asp-validation-for="CinemaId" class="text-danger small"></span>
+                                <span asp-validation-for="CinemaId" class="text-danger field-validation-error"></span>
                             </div>
                         </div>
                     </div>
@@ -216,7 +216,8 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_AdminValidationScript" />
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -241,14 +242,11 @@
             const posterUrlInput = document.getElementById('PosterUrl');
             
             if (posterFileInput) {
-                console.log("Poster file input found");
                 posterFileInput.addEventListener('change', function(event) {
-                    console.log("Poster file changed", event.target.files);
                     posterPreview.innerHTML = ''; // Clear previous preview
                     
                     if (event.target.files && event.target.files.length > 0) {
                         const file = event.target.files[0];
-                        console.log("File selected:", file.name, file.size);
                         
                         // Check file size (max 2MB)
                         if (file.size > 2 * 1024 * 1024) {
@@ -264,7 +262,6 @@
                         
                         const reader = new FileReader();
                         reader.onload = function(e) {
-                            console.log("File loaded successfully");
                             posterPreview.innerHTML = `
                                 <div class="position-relative mt-2">
                                     <img src="${e.target.result}" alt="Poster Preview" class="img-fluid shadow" 
@@ -275,14 +272,9 @@
                                 </div>
                             `;
                         };
-                        reader.onerror = function(e) {
-                            console.error("Error reading file:", e);
-                        };
                         reader.readAsDataURL(file);
                     }
                 });
-            } else {
-                console.warn("Poster file input not found");
             }
             
             // When PosterUrl is filled, clear the file input

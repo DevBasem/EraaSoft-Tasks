@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApp.DataAccess;
 using MovieApp.Models;
+using MovieApp.Utilities;
 using MovieApp.ViewModels;
 using MovieApp.ViewModels.Admin;
 using System;
@@ -49,6 +50,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
             if (actor == null)
             {
+                ToastNotification.Error(TempData, "Actor not found");
                 return NotFound();
             }
 
@@ -94,10 +96,12 @@ namespace MovieApp.Areas.Admin.Controllers
                     _context.Update(actor);
                     await _context.SaveChangesAsync();
                 }
-
+                
+                ToastNotification.Success(TempData, $"Actor '{actor.FullName}' was created successfully");
                 return RedirectToAction(nameof(Index));
             }
-
+            
+            ToastNotification.Error(TempData, "Please correct the errors and try again");
             return View(viewModel);
         }
 
@@ -107,6 +111,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
             if (actor == null)
             {
+                ToastNotification.Error(TempData, "Actor not found");
                 return NotFound();
             }
 
@@ -127,6 +132,7 @@ namespace MovieApp.Areas.Admin.Controllers
         {
             if (id != viewModel.Id)
             {
+                ToastNotification.Error(TempData, "Invalid actor ID");
                 return NotFound();
             }
 
@@ -138,6 +144,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
                     if (actor == null)
                     {
+                        ToastNotification.Error(TempData, "Actor not found");
                         return NotFound();
                     }
 
@@ -158,21 +165,26 @@ namespace MovieApp.Areas.Admin.Controllers
 
                     _context.Update(actor);
                     await _context.SaveChangesAsync();
+                    
+                    ToastNotification.Success(TempData, $"Actor '{actor.FullName}' was updated successfully");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!ActorExists(viewModel.Id))
                     {
+                        ToastNotification.Error(TempData, "Actor not found");
                         return NotFound();
                     }
                     else
                     {
+                        ToastNotification.Error(TempData, "An error occurred while updating the actor");
                         throw;
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
-
+            
+            ToastNotification.Error(TempData, "Please correct the errors and try again");
             return View(viewModel);
         }
 
@@ -185,6 +197,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
             if (actor == null)
             {
+                ToastNotification.Error(TempData, "Actor not found");
                 return NotFound();
             }
 
@@ -208,8 +221,14 @@ namespace MovieApp.Areas.Admin.Controllers
             
             if (actor != null)
             {
+                var actorName = actor.FullName;
                 _context.Actors.Remove(actor);
                 await _context.SaveChangesAsync();
+                ToastNotification.Success(TempData, $"Actor '{actorName}' was deleted successfully");
+            }
+            else
+            {
+                ToastNotification.Error(TempData, "Actor not found");
             }
 
             return RedirectToAction(nameof(Index));

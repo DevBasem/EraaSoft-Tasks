@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MovieApp.DataAccess;
 using MovieApp.Models;
+using MovieApp.Utilities;
 using MovieApp.ViewModels;
 using MovieApp.ViewModels.Admin;
 using System;
@@ -120,6 +121,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
             if (movie == null)
             {
+                ToastNotification.Error(TempData, "Movie not found");
                 return NotFound();
             }
 
@@ -272,6 +274,7 @@ namespace MovieApp.Areas.Admin.Controllers
                     await _context.SaveChangesAsync();
                 }
 
+                ToastNotification.Success(TempData, $"Movie '{movie.Title}' was created successfully");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -287,7 +290,8 @@ namespace MovieApp.Areas.Admin.Controllers
             viewModel.AllActors = await _context.Actors.OrderBy(a => a.FullName)
                 .Select(a => new MovieApp.ViewModels.Admin.ActorSelectVM { Id = a.Id, FullName = a.FullName })
                 .ToListAsync();
-                
+            
+            ToastNotification.Error(TempData, "Please correct the errors and try again");
             return View(viewModel);
         }
 
@@ -300,6 +304,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
             if (movie == null)
             {
+                ToastNotification.Error(TempData, "Movie not found");
                 return NotFound();
             }
 
@@ -368,6 +373,7 @@ namespace MovieApp.Areas.Admin.Controllers
         {
             if (id != viewModel.Id)
             {
+                ToastNotification.Error(TempData, "Invalid movie ID");
                 return NotFound();
             }
 
@@ -381,6 +387,7 @@ namespace MovieApp.Areas.Admin.Controllers
                     
                     if (movie == null)
                     {
+                        ToastNotification.Error(TempData, "Movie not found");
                         return NotFound();
                     }
 
@@ -460,15 +467,19 @@ namespace MovieApp.Areas.Admin.Controllers
                     
                     _context.Update(movie);
                     await _context.SaveChangesAsync();
+                    
+                    ToastNotification.Success(TempData, $"Movie '{movie.Title}' was updated successfully");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!MovieExists(viewModel.Id))
                     {
+                        ToastNotification.Error(TempData, "Movie not found");
                         return NotFound();
                     }
                     else
                     {
+                        ToastNotification.Error(TempData, "An error occurred while updating the movie");
                         throw;
                     }
                 }
@@ -492,6 +503,7 @@ namespace MovieApp.Areas.Admin.Controllers
                 IsSelected = viewModel.SelectedActorIds.Contains(a.Id)
             }).ToList();
             
+            ToastNotification.Error(TempData, "Please correct the errors and try again");
             return View(viewModel);
         }
 
@@ -504,6 +516,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
             if (movie == null)
             {
+                ToastNotification.Error(TempData, "Movie not found");
                 return NotFound();
             }
 
@@ -522,6 +535,9 @@ namespace MovieApp.Areas.Admin.Controllers
                 
             if (movie != null)
             {
+                // Store the movie title for success message
+                var movieTitle = movie.Title;
+                
                 // Remove movie actors relations
                 if (movie.Actors != null && movie.Actors.Any())
                 {
@@ -536,6 +552,12 @@ namespace MovieApp.Areas.Admin.Controllers
                 
                 _context.Movies.Remove(movie);
                 await _context.SaveChangesAsync();
+                
+                ToastNotification.Success(TempData, $"Movie '{movieTitle}' was deleted successfully");
+            }
+            else
+            {
+                ToastNotification.Error(TempData, "Movie not found");
             }
 
             return RedirectToAction(nameof(Index));
@@ -552,6 +574,8 @@ namespace MovieApp.Areas.Admin.Controllers
 
             _context.MovieImages.Remove(image);
             await _context.SaveChangesAsync();
+            
+            ToastNotification.Success(TempData, "Image was deleted successfully");
             return Ok();
         }
 
@@ -604,6 +628,8 @@ namespace MovieApp.Areas.Admin.Controllers
             image.Order = newOrder;
             
             await _context.SaveChangesAsync();
+            
+            ToastNotification.Success(TempData, "Image order updated successfully");
             return Ok();
         }
 

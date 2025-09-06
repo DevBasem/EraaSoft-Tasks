@@ -152,6 +152,239 @@
 
 /* ===== END ALERT FIXES ===== */
 
+/* ===== TOAST NOTIFICATION STYLING ===== */
+.admin-area .toast-container {
+    z-index: 1090;
+}
+
+/* Base toast styling with dark theme */
+.admin-area .toast,
+.admin-toast {
+    background-color: #1e1e1e !important; /* Solid dark background, no transparency */
+    color: #ffffff !important; /* Explicit white text */
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: none; /* Remove backdrop filter to ensure opacity */
+    -webkit-backdrop-filter: none;
+    overflow: hidden;
+    opacity: 1 !important; /* Ensure toast is fully opaque */
+    width: 350px;
+    max-width: 90vw;
+    margin-bottom: 15px;
+}
+
+/* Toast header with dark theme */
+.admin-area .toast-header,
+.admin-toast .toast-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff !important; /* Explicit white text */
+    padding: 0.75rem 1rem;
+    background: #121212 !important; /* Solid dark background for header */
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+/* Toast body with dark theme */
+.admin-area .toast-body,
+.admin-toast .toast-body,
+.admin-toast-body {
+    padding: 1rem;
+    color: #ffffff !important; /* Explicit white text */
+    background-color: #1e1e1e !important; /* Solid dark background, no transparency */
+    font-size: 0.95rem;
+}
+
+/* Success toast */
+.admin-area .toast-header.bg-success,
+.admin-toast .toast-header.bg-success {
+    /* Darker green gradient for better contrast with white text */
+    background: linear-gradient(135deg, #218c3a 0%, #1a7430 100%) !important;
+    border-bottom: 1px solid rgba(48, 209, 88, 0.2);
+}
+
+.admin-area .toast-header.bg-success + .toast-body,
+.admin-toast .toast-header.bg-success + .toast-body {
+    border-left: 3px solid #30d158;
+}
+
+/* Error toast */
+.admin-area .toast-header.bg-danger,
+.admin-toast .toast-header.bg-danger {
+    /* Darker red gradient for better contrast */
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%) !important;
+    border-bottom: 1px solid rgba(255, 69, 58, 0.2);
+}
+
+.admin-area .toast-header.bg-danger + .toast-body,
+.admin-toast .toast-header.bg-danger + .toast-body {
+    border-left: 3px solid #ff453a;
+}
+
+/* Warning toast */
+.admin-area .toast-header.bg-warning,
+.admin-toast .toast-header.bg-warning {
+    /* Darker orange/yellow gradient for better contrast */
+    background: linear-gradient(135deg, #f57c00 0%, #e65100 100%) !important;
+    border-bottom: 1px solid rgba(255, 214, 10, 0.2);
+}
+
+.admin-area .toast-header.bg-warning + .toast-body,
+.admin-toast .toast-header.bg-warning + .toast-body {
+    border-left: 3px solid #ffd60a;
+}
+
+/* Info toast */
+.admin-area .toast-header.bg-info,
+.admin-toast .toast-header.bg-info {
+    /* Darker blue gradient for better contrast */
+    background: linear-gradient(135deg, #0566c7 0%, #0450a0 100%) !important;
+    border-bottom: 1px solid rgba(10, 132, 255, 0.2);
+}
+
+.admin-area .toast-header.bg-info + .toast-body,
+.admin-toast .toast-header.bg-info + .toast-body {
+    border-left: 3px solid #0a84ff;
+}
+
+/* Close button */
+.admin-area .toast .btn-close-white,
+.admin-toast .btn-close-white {
+    filter: invert(1) brightness(150%);
+    opacity: 0.8;
+    background-size: 0.7em;
+}
+
+.admin-area .toast .btn-close-white:hover,
+.admin-toast .btn-close-white:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Toast icons */
+.admin-area .toast-header i,
+.admin-toast .toast-header i {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    color: #ffffff !important; /* Ensure icon color is white */
+}
+
+/* Animation for toast */
+@keyframes toastFadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px) scale(0.95);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes toastPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
+.admin-area .toast,
+.admin-toast {
+    animation: toastFadeIn 0.3s ease forwards, toastPulse 2s infinite;
+}
+
+/* Position the toast container */
+.admin-area .toast-container.position-fixed,
+.toast-container.position-fixed {
+    padding: 1.5rem;
+}
+
+/* Add subtle glow effect based on toast type */
+.admin-area .toast-header.bg-success + .toast-body,
+.admin-toast .toast-header.bg-success + .toast-body {
+    box-shadow: inset 0 5px 5px -5px rgba(48, 209, 88, 0.3);
+}
+
+.admin-area .toast-header.bg-danger + .toast-body,
+.admin-toast .toast-header.bg-danger + .toast-body {
+    box-shadow: inset 0 5px 5px -5px rgba(255, 69, 58, 0.3);
+}
+
+.admin-area .toast-header.bg-warning + .toast-body,
+.admin-toast .toast-header.bg-warning + .toast-body {
+    box-shadow: inset 0 5px 5px -5px rgba(255, 214, 10, 0.3);
+}
+
+.admin-area .toast-header.bg-info + .toast-body,
+.admin-toast .toast-header.bg-info + .toast-body {
+    box-shadow: inset 0 5px 5px -5px rgba(10, 132, 255, 0.3);
+}
+
+/* Text colors */
+.admin-area .toast-header small,
+.admin-toast .toast-header small {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-size: 0.75rem;
+}
+
+/* For multiple toasts */
+.admin-area .toast-container .toast:nth-child(2),
+.toast-container .admin-toast:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.admin-area .toast-container .toast:nth-child(3),
+.toast-container .admin-toast:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* Additional dark theme overrides for Bootstrap toasts */
+.admin-area .bg-dark,
+.admin-area .text-white,
+.bg-dark.admin-toast,
+.text-white.admin-toast {
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
+}
+
+/* Ensure that bootstrap doesn't override our styles */
+.toast,
+.toast.show,
+.toast.fade,
+.toast.hide {
+    opacity: 1 !important;
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
+}
+
+/* Override default bootstrap settings */
+.toast-container .toast {
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
+}
+
+.toast .toast-header {
+    background-color: #121212 !important;
+    color: #ffffff !important;
+}
+
+.toast .toast-body {
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
+}
+
+/* In case Bootstrap is setting opacity with inline styles */
+body .toast {
+    opacity: 1 !important;
+}
+/* ===== END TOAST NOTIFICATION STYLING ===== */
+
 /* Custom scrollbar for the admin area and its children */
 .admin-area::-webkit-scrollbar,
 .admin-area *::-webkit-scrollbar {

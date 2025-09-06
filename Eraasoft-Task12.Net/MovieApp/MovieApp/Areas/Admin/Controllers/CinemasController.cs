@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApp.DataAccess;
 using MovieApp.Models;
+using MovieApp.Utilities;
 using MovieApp.ViewModels;
 using MovieApp.ViewModels.Admin;
 using System;
@@ -49,6 +50,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
             if (cinema == null)
             {
+                ToastNotification.Error(TempData, "Cinema not found");
                 return NotFound();
             }
 
@@ -99,10 +101,12 @@ namespace MovieApp.Areas.Admin.Controllers
                     _context.Update(cinema);
                     await _context.SaveChangesAsync();
                 }
-
+                
+                ToastNotification.Success(TempData, $"Cinema '{cinema.Name}' was created successfully");
                 return RedirectToAction(nameof(Index));
             }
-
+            
+            ToastNotification.Error(TempData, "Please correct the errors and try again");
             return View(viewModel);
         }
 
@@ -112,6 +116,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
             if (cinema == null)
             {
+                ToastNotification.Error(TempData, "Cinema not found");
                 return NotFound();
             }
 
@@ -136,6 +141,7 @@ namespace MovieApp.Areas.Admin.Controllers
         {
             if (id != viewModel.Id)
             {
+                ToastNotification.Error(TempData, "Invalid cinema ID");
                 return NotFound();
             }
 
@@ -147,6 +153,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
                     if (cinema == null)
                     {
+                        ToastNotification.Error(TempData, "Cinema not found");
                         return NotFound();
                     }
 
@@ -171,21 +178,26 @@ namespace MovieApp.Areas.Admin.Controllers
 
                     _context.Update(cinema);
                     await _context.SaveChangesAsync();
+                    
+                    ToastNotification.Success(TempData, $"Cinema '{cinema.Name}' was updated successfully");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!CinemaExists(viewModel.Id))
                     {
+                        ToastNotification.Error(TempData, "Cinema not found");
                         return NotFound();
                     }
                     else
                     {
+                        ToastNotification.Error(TempData, "An error occurred while updating the cinema");
                         throw;
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
-
+            
+            ToastNotification.Error(TempData, "Please correct the errors and try again");
             return View(viewModel);
         }
 
@@ -197,6 +209,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
             if (cinema == null)
             {
+                ToastNotification.Error(TempData, "Cinema not found");
                 return NotFound();
             }
 
@@ -221,8 +234,14 @@ namespace MovieApp.Areas.Admin.Controllers
             
             if (cinema != null)
             {
+                var cinemaName = cinema.Name;
                 _context.Cinemas.Remove(cinema);
                 await _context.SaveChangesAsync();
+                ToastNotification.Success(TempData, $"Cinema '{cinemaName}' was deleted successfully");
+            }
+            else
+            {
+                ToastNotification.Error(TempData, "Cinema not found");
             }
 
             return RedirectToAction(nameof(Index));

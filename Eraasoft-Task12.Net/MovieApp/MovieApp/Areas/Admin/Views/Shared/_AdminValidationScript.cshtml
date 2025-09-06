@@ -1,0 +1,90 @@
+<script>
+    // Configure all forms with jQuery validation to validate on blur
+    $(document).ready(function () {
+        // Apply to all forms with data-validate-on-blur attribute
+        $("form[data-validate-on-blur='true']").each(function () {
+            var $form = $(this);
+            
+            // Only setup validation if the form exists and has validator
+            if ($form.length > 0 && $form.data('validator')) {
+                // Configure validation to trigger on blur
+                $form.data('validator').settings.onfocusout = function (element) {
+                    // Validate field on blur
+                    this.element(element);
+                };
+
+                // Validate on keyup after a delay to avoid validation while typing
+                $form.data('validator').settings.onkeyup = function (element, event) {
+                    // Use a delay to prevent validation while typing
+                    var self = this;
+                    clearTimeout($(element).data("timeout"));
+                    $(element).data("timeout", setTimeout(function () {
+                        self.element(element);
+                    }, 500));
+                };
+                
+                // Update error element display immediately when validation occurs
+                $form.data('validator').settings.highlight = function (element, errorClass, validClass) {
+                    // Add Bootstrap invalid class and remove valid class
+                    $(element).addClass('is-invalid').removeClass('is-valid');
+                    $(element).addClass(errorClass).removeClass(validClass);
+                    $(element).closest('.admin-form-group').addClass('has-error');
+                };
+                
+                $form.data('validator').settings.unhighlight = function (element, errorClass, validClass) {
+                    // Add Bootstrap valid class and remove invalid class
+                    $(element).addClass('is-valid').removeClass('is-invalid');
+                    $(element).removeClass(errorClass).addClass(validClass);
+                    $(element).closest('.admin-form-group').removeClass('has-error');
+                };
+                
+                // Ensure error messages are styled properly
+                $form.data('validator').settings.errorElement = "span";
+                $form.data('validator').settings.errorClass = "text-danger field-validation-error";
+                
+                // Add style to ensure error messages are clearly visible
+                $("<style>")
+                    .prop("type", "text/css")
+                    .html(`
+                        .field-validation-error {
+                            color: #dc3545 !important;
+                            font-weight: 500;
+                            display: block;
+                            margin-top: 0.25rem;
+                        }
+                        .validation-summary-errors {
+                            color: #dc3545 !important;
+                        }
+                        .admin-form-group.has-error label {
+                            color: #dc3545;
+                        }
+                        .is-invalid {
+                            border-color: #dc3545 !important;
+                            padding-right: calc(1.5em + 0.75rem) !important;
+                            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e") !important;
+                            background-repeat: no-repeat !important;
+                            background-position: right calc(0.375em + 0.1875rem) center !important;
+                            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) !important;
+                        }
+                        .is-valid {
+                            border-color: #198754 !important;
+                            padding-right: calc(1.5em + 0.75rem) !important;
+                            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") !important;
+                            background-repeat: no-repeat !important;
+                            background-position: right calc(0.375em + 0.1875rem) center !important;
+                            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) !important;
+                        }
+                    `)
+                    .appendTo("head");
+            }
+        });
+        
+        // Automatically apply to all forms in admin area
+        $("form").each(function() {
+            var $form = $(this);
+            if (!$form.attr('data-validate-on-blur')) {
+                $form.attr('data-validate-on-blur', 'true');
+            }
+        });
+    });
+</script>
