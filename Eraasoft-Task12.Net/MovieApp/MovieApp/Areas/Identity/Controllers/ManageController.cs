@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MovieApp.Models;
+using MovieApp.Utilities;
 using MovieApp.ViewModels.Identity;
 using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ namespace MovieApp.Areas.Identity.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<ManageController> _logger;
+        private readonly string _superAdminEmail = "admin@movieapp.com";
 
         public ManageController(
             UserManager<ApplicationUser> userManager,
@@ -39,7 +41,8 @@ namespace MovieApp.Areas.Identity.Controllers
                 LastName = user.LastName,
                 Email = user.Email,
                 IsEmailConfirmed = user.EmailConfirmed,
-                PhoneNumber = user.PhoneNumber
+                PhoneNumber = user.PhoneNumber,
+                IsSuperAdmin = user.Email.Equals(_superAdminEmail, StringComparison.OrdinalIgnoreCase)
             };
 
             return View(model);
@@ -60,6 +63,10 @@ namespace MovieApp.Areas.Identity.Controllers
                 return View(model);
             }
 
+            // Check if this is the super admin account
+            bool isSuperAdmin = user.Email.Equals(_superAdminEmail, StringComparison.OrdinalIgnoreCase);
+            model.IsSuperAdmin = isSuperAdmin;
+
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.PhoneNumber = model.PhoneNumber;
@@ -75,7 +82,7 @@ namespace MovieApp.Areas.Identity.Controllers
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            TempData["StatusMessage"] = "Your profile has been updated";
+            ToastNotification.Success(TempData, "Your profile has been updated");
             return RedirectToAction(nameof(Index));
         }
 
@@ -85,6 +92,13 @@ namespace MovieApp.Areas.Identity.Controllers
             if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            // Prevent super admin from changing password
+            if (user.Email.Equals(_superAdminEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                ToastNotification.Error(TempData, "Super admin password cannot be changed for security reasons.");
+                return RedirectToAction(nameof(Index));
             }
 
             var hasPassword = await _userManager.HasPasswordAsync(user);
@@ -111,6 +125,13 @@ namespace MovieApp.Areas.Identity.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
+            // Prevent super admin from changing password
+            if (user.Email.Equals(_superAdminEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                ToastNotification.Error(TempData, "Super admin password cannot be changed for security reasons.");
+                return RedirectToAction(nameof(Index));
+            }
+
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
             if (!changePasswordResult.Succeeded)
             {
@@ -123,7 +144,7 @@ namespace MovieApp.Areas.Identity.Controllers
 
             await _signInManager.RefreshSignInAsync(user);
             _logger.LogInformation("User changed their password successfully.");
-            TempData["StatusMessage"] = "Your password has been changed.";
+            ToastNotification.Success(TempData, "Your password has been changed.");
 
             return RedirectToAction(nameof(Index));
         }
@@ -134,6 +155,13 @@ namespace MovieApp.Areas.Identity.Controllers
             if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            // Prevent super admin from changing password
+            if (user.Email.Equals(_superAdminEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                ToastNotification.Error(TempData, "Super admin password cannot be changed for security reasons.");
+                return RedirectToAction(nameof(Index));
             }
 
             var hasPassword = await _userManager.HasPasswordAsync(user);
@@ -160,6 +188,13 @@ namespace MovieApp.Areas.Identity.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
+            // Prevent super admin from changing password
+            if (user.Email.Equals(_superAdminEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                ToastNotification.Error(TempData, "Super admin password cannot be changed for security reasons.");
+                return RedirectToAction(nameof(Index));
+            }
+
             var addPasswordResult = await _userManager.AddPasswordAsync(user, model.NewPassword);
             if (!addPasswordResult.Succeeded)
             {
@@ -171,7 +206,7 @@ namespace MovieApp.Areas.Identity.Controllers
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            TempData["StatusMessage"] = "Your password has been set.";
+            ToastNotification.Success(TempData, "Your password has been set.");
 
             return RedirectToAction(nameof(Index));
         }

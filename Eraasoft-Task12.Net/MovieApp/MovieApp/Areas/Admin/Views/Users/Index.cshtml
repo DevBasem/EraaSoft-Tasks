@@ -1,0 +1,196 @@
+@model UsersViewModel
+@{
+    ViewData["Title"] = "User Management";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-content-container">
+    <div class="admin-content-header">
+        <h1>@ViewData["Title"]</h1>
+        <p class="admin-subtitle">Manage user accounts and permissions</p>
+    </div>
+    
+    <div class="admin-card">
+        <div class="admin-card-header d-flex justify-content-between align-items-center">
+            <h5>Users</h5>
+            <div>
+                <a asp-area="Identity" asp-controller="Account" asp-action="Register" class="admin-btn admin-btn-primary admin-btn-sm">
+                    <i class="fas fa-user-plus me-1"></i> Create User
+                </a>
+            </div>
+        </div>
+        <div class="admin-card-body">
+            <div class="table-responsive">
+                <table class="table admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Roles</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Users)
+                        {
+                            bool isSuperAdmin = user.Email == "admin@movieapp.com";
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar-circle me-2">
+                                            @if (!string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.LastName))
+                                            {
+                                                @(user.FirstName.Substring(0, 1) + user.LastName.Substring(0, 1))
+                                            }
+                                            else
+                                            {
+                                                @(user.Email.Substring(0, 1).ToUpper())
+                                            }
+                                        </div>
+                                        <div>
+                                            <span class="fw-medium">@(user.FirstName + " " + user.LastName)</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@user.Email</td>
+                                <td>
+                                    @if (isSuperAdmin)
+                                    {
+                                        <span class="admin-badge admin-badge-danger">
+                                            <i class="fas fa-shield-alt me-1"></i>Super Admin
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        @* We need to get user roles dynamically from a view component in a real app *@
+                                        <span class="admin-badge admin-badge-secondary">User</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.IsActive)
+                                    {
+                                        <span class="admin-badge admin-badge-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="admin-badge admin-badge-warning">Inactive</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="admin-action-buttons">
+                                        <a asp-action="Details" asp-route-id="@user.Id" class="admin-btn admin-btn-icon admin-btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@user.Id" class="admin-btn admin-btn-icon admin-btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        @if (!isSuperAdmin)
+                                        {
+                                            <form asp-action="ToggleStatus" asp-route-id="@user.Id" method="post" class="d-inline">
+                                                <button type="submit" class="admin-btn admin-btn-icon admin-btn-sm admin-btn-warning" 
+                                                        onclick="return confirm('Are you sure you want to @(user.IsActive ? "deactivate" : "activate") this user?')">
+                                                    @if (user.IsActive)
+                                                    {
+                                                        <i class="fas fa-user-slash"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fas fa-user-check"></i>
+                                                    }
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="admin-pagination">
+                @if (Model.Pager.TotalPages > 1)
+                {
+                    <nav>
+                        <ul class="pagination">
+                            @if (Model.Pager.CurrentPage > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-action="Index" asp-route-page="1">First</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.Pager.CurrentPage - 1)">Previous</a>
+                                </li>
+                            }
+
+                            @for (var p = Model.Pager.StartPage; p <= Model.Pager.EndPage; p++)
+                            {
+                                <li class="page-item @(p == Model.Pager.CurrentPage ? "active" : "")">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@p">@p</a>
+                                </li>
+                            }
+
+                            @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.Pager.CurrentPage + 1)">Next</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.Pager.TotalPages)">Last</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .user-avatar-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    
+    .admin-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    
+    .admin-badge-success {
+        background-color: rgba(52, 199, 89, 0.2);
+        color: #34c759;
+    }
+    
+    .admin-badge-warning {
+        background-color: rgba(255, 149, 0, 0.2);
+        color: #ff9500;
+    }
+    
+    .admin-badge-danger {
+        background-color: rgba(255, 59, 48, 0.2);
+        color: #ff3b30;
+    }
+    
+    .admin-badge-secondary {
+        background-color: rgba(142, 142, 147, 0.2);
+        color: #8e8e93;
+    }
+    
+    .admin-action-buttons {
+        display: flex;
+        gap: 5px;
+    }
+</style>

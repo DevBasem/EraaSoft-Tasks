@@ -66,19 +66,18 @@
                 </form>
             </section>
         </div>
-        <div class="col-md-6">
-            <section class="external-auth">
-                <h4>Use another service to log in</h4>
+        <div class="col-md-6" style="margin-top: 20px;">
+            <section class="login-benefits">
+                <h4>Why create an account?</h4>
                 <hr />
                 <div class="identity-info">
                     <p>
-                        External authentication services are not configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
-                        for details on setting up this ASP.NET application to support logging in via external services.
+                        Join our movie community and get access to exclusive features and personalized experiences.
                     </p>
                 </div>
                 
                 <div class="auth-separator">
-                    <span>Why log in?</span>
+                    <span>Member Benefits</span>
                 </div>
                 
                 <div class="mt-4">
@@ -86,7 +85,15 @@
                         <i class="fas fa-ticket-alt text-primary me-3 mt-1"></i>
                         <div>
                             <h5 class="mb-1">Book Movie Tickets</h5>
-                            <p class="text-muted">Log in to book tickets for your favorite movies</p>
+                            <p class="text-muted">Reserve your seats for upcoming movies and shows</p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex mb-2">
+                        <i class="fas fa-heart text-primary me-3 mt-1"></i>
+                        <div>
+                            <h5 class="mb-1">Save Favorites</h5>
+                            <p class="text-muted">Create your watchlist and track your favorite movies</p>
                         </div>
                     </div>
                     
@@ -99,10 +106,10 @@
                     </div>
                     
                     <div class="d-flex">
-                        <i class="fas fa-percentage text-primary me-3 mt-1"></i>
+                        <i class="fas fa-star text-primary me-3 mt-1"></i>
                         <div>
-                            <h5 class="mb-1">Special Discounts</h5>
-                            <p class="text-muted">Get access to member-only deals and offers</p>
+                            <h5 class="mb-1">Exclusive Content</h5>
+                            <p class="text-muted">Get early access to trailers and special content</p>
                         </div>
                     </div>
                 </div>
@@ -159,6 +166,10 @@
     .btn-link:hover {
         text-decoration: underline;
         color: var(--primary-dark);
+    }
+    
+    .login-benefits h4 {
+        color: var(--text-light);
     }
 </style>
 

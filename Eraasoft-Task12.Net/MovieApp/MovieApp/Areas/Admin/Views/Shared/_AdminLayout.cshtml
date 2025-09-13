@@ -7,6 +7,7 @@
     <title>@ViewData["Title"] - MovieApp Admin</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/avatar-fix.css" asp-append-version="true" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
@@ -62,12 +63,16 @@
                             <i class="fas fa-user-circle"></i> Admin
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                            <li><a class="dropdown-item" asp-area="Identity" asp-controller="Manage" asp-action="Index"><i class="fas fa-user me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" asp-area="Identity" asp-controller="Manage" asp-action="ChangePassword"><i class="fas fa-key me-2"></i> Change Password</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                            <li>
+                                <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post">
+                                    <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i> Logout</button>
+                                </form>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -168,17 +173,18 @@
                         </a>
                     </div>
 
-                    <div class="admin-nav-heading">Settings</div>
+                    <div class="admin-nav-heading">Administration</div>
 
                     <div class="admin-nav-item">
-                        <a class="admin-nav-link" href="#">
-                            <i class="fas fa-cog"></i> General Settings
+                        <a class="admin-nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Users" ? "active" : "")"
+                            asp-area="Admin" asp-controller="Users" asp-action="Index">
+                            <i class="fas fa-user-shield"></i> User Management
                         </a>
                     </div>
 
                     <div class="admin-nav-item">
                         <a class="admin-nav-link" href="#">
-                            <i class="fas fa-user-shield"></i> User Management
+                            <i class="fas fa-cog"></i> System Settings
                         </a>
                     </div>
                 </nav>

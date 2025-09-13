@@ -1,0 +1,333 @@
+@{
+    ViewData["Title"] = "Page Not Found";
+    int statusCode = ViewBag.StatusCode ?? 404;
+    string errorMessage = ViewBag.ErrorMessage ?? "The page you are looking for could not be found";
+}
+
+<div class="error-container">
+    <div class="error-content">
+        <!-- Movie Film Strip Animation -->
+        <div class="film-strip">
+            <div class="film-frame"></div>
+            <div class="film-frame"></div>
+            <div class="film-frame"></div>
+            <div class="film-frame"></div>
+            <div class="film-frame"></div>
+        </div>
+        
+        <!-- Error Icon and Message -->
+        <div class="error-icon">
+            <i class="fas fa-film"></i>
+            <div class="error-code">@statusCode</div>
+        </div>
+        
+        <div class="error-message">
+            <h1>Oops! Scene Not Found</h1>
+            <p class="error-description">@errorMessage</p>
+            <p class="error-subtitle">
+                It looks like this page has been cut from the final edit. 
+                Don't worry, there are plenty of other great scenes to explore!
+            </p>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="error-actions">
+            <a href="@Url.Action("Index", "Home", new { area = "Public" })" class="btn btn-primary-custom">
+                <i class="fas fa-home me-2"></i>Back to Home
+            </a>
+            <button onclick="history.back()" class="btn btn-outline-primary-custom">
+                <i class="fas fa-arrow-left me-2"></i>Go Back
+            </button>
+        </div>
+        
+        <!-- Movie Suggestions -->
+        <div class="movie-suggestions">
+            <h3><i class="fas fa-star me-2"></i>Popular Movies</h3>
+            <div class="suggestion-links">
+                <a href="@Url.Action("Index", "Movies", new { area = "Public" })" class="suggestion-link">
+                    <i class="fas fa-ticket-alt me-1"></i>Browse Movies
+                </a>
+                <a href="@Url.Action("Index", "Categories", new { area = "Public" })" class="suggestion-link">
+                    <i class="fas fa-list me-1"></i>View Categories
+                </a>
+                <a href="@Url.Action("Index", "Actors", new { area = "Public" })" class="suggestion-link">
+                    <i class="fas fa-users me-1"></i>Famous Actors
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Decorative Elements -->
+    <div class="popcorn-container">
+        <div class="popcorn">??</div>
+        <div class="popcorn">??</div>
+        <div class="popcorn">??</div>
+    </div>
+</div>
+
+<style>
+    .error-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #21262d 100%);
+        color: var(--text-light);
+        position: relative;
+        overflow: hidden;
+        padding: 80px 20px 20px 20px; /* Added top padding for navbar */
+    }
+    
+    .error-content {
+        text-align: center;
+        max-width: 600px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .film-strip {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 30px;
+        opacity: 0.7;
+    }
+    
+    .film-frame {
+        width: 20px;
+        height: 30px;
+        background: linear-gradient(45deg, #333 25%, transparent 25%),
+                    linear-gradient(-45deg, #333 25%, transparent 25%),
+                    linear-gradient(45deg, transparent 75%, #333 75%),
+                    linear-gradient(-45deg, transparent 75%, #333 75%);
+        background-size: 4px 4px;
+        background-position: 0 0, 0 2px, 2px -2px, -2px 0px;
+        border: 2px solid #666;
+        animation: filmRoll 2s ease-in-out infinite alternate;
+    }
+    
+    .film-frame:nth-child(2) { animation-delay: 0.2s; }
+    .film-frame:nth-child(3) { animation-delay: 0.4s; }
+    .film-frame:nth-child(4) { animation-delay: 0.6s; }
+    .film-frame:nth-child(5) { animation-delay: 0.8s; }
+    
+    @@keyframes filmRoll {
+        0% { transform: translateY(0) rotateZ(0deg); }
+        100% { transform: translateY(-10px) rotateZ(5deg); }
+    }
+    
+    .error-icon {
+        position: relative;
+        margin: 30px 0;
+    }
+    
+    .error-icon .fas {
+        font-size: 6rem;
+        color: var(--primary-color);
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .error-code {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2rem;
+        font-weight: bold;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    }
+    
+    @@keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    
+    .error-message h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        background: linear-gradient(45deg, var(--primary-color), #4fc3f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .error-description {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+    }
+    
+    .error-subtitle {
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+    
+    .error-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+    }
+    
+    .btn-primary-custom {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-primary-custom:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-outline-primary-custom {
+        background: transparent;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        padding: 10px 25px;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-outline-primary-custom:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+    
+    .movie-suggestions {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-color);
+    }
+    
+    .movie-suggestions h3 {
+        color: var(--text-light);
+        margin-bottom: 20px;
+        font-size: 1.3rem;
+    }
+    
+    .suggestion-links {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .suggestion-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 20px;
+        background: rgba(10, 132, 255, 0.1);
+        border: 1px solid rgba(10, 132, 255, 0.3);
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .suggestion-link:hover {
+        background: rgba(10, 132, 255, 0.2);
+        color: var(--primary-light);
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+    
+    .popcorn-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+    
+    .popcorn {
+        position: absolute;
+        font-size: 2rem;
+        opacity: 0.1;
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .popcorn:nth-child(1) {
+        top: 20%;
+        left: 10%;
+        animation-delay: 0s;
+    }
+    
+    .popcorn:nth-child(2) {
+        top: 60%;
+        right: 15%;
+        animation-delay: 2s;
+    }
+    
+    .popcorn:nth-child(3) {
+        bottom: 20%;
+        left: 20%;
+        animation-delay: 4s;
+    }
+    
+    @@keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        33% { transform: translateY(-20px) rotate(120deg); }
+        66% { transform: translateY(10px) rotate(240deg); }
+    }
+    
+    @@media (max-width: 768px) {
+        .error-container {
+            padding: 100px 20px 20px 20px; /* Increased top padding for mobile navbar */
+        }
+        
+        .error-message h1 {
+            font-size: 2rem;
+        }
+        
+        .error-icon .fas {
+            font-size: 4rem;
+        }
+        
+        .error-code {
+            font-size: 1.5rem;
+        }
+        
+        .error-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .btn-primary-custom,
+        .btn-outline-primary-custom {
+            width: 200px;
+            justify-content: center;
+        }
+        
+        .suggestion-links {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .suggestion-link {
+            width: 200px;
+            text-align: center;
+        }
+    }
+</style>

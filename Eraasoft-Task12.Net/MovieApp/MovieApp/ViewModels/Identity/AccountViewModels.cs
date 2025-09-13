@@ -94,6 +94,9 @@ namespace MovieApp.ViewModels.Identity
 
         [Display(Name = "Email Confirmed")]
         public bool IsEmailConfirmed { get; set; }
+        
+        // Flag to identify if user is super admin
+        public bool IsSuperAdmin { get; set; }
     }
 
     public class ChangePasswordViewModel

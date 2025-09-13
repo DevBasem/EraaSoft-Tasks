@@ -54,7 +54,8 @@ namespace MovieApp.DataAccess
                         IsActive = true
                     };
 
-                    var result = await _userManager.CreateAsync(adminUser, "Admin123!");
+                    // Updated password to match documentation
+                    var result = await _userManager.CreateAsync(adminUser, "Admin@123");
 
                     if (result.Succeeded)
                     {
@@ -67,10 +68,23 @@ namespace MovieApp.DataAccess
                         _logger.LogError("Error creating admin user: {Errors}", errors);
                     }
                 }
-                else if (!await _userManager.IsInRoleAsync(adminUser, "Admin"))
+                else
                 {
-                    await _userManager.AddToRoleAsync(adminUser, "Admin");
-                    _logger.LogInformation("Added Admin role to existing admin user");
+                    // For existing admin user, reset password to ensure it matches documentation
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(adminUser);
+                    var result = await _userManager.ResetPasswordAsync(adminUser, token, "Admin@123");
+                    
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation("Admin password reset to match documentation");
+                    }
+                    
+                    // Make sure the admin is in the Admin role
+                    if (!await _userManager.IsInRoleAsync(adminUser, "Admin"))
+                    {
+                        await _userManager.AddToRoleAsync(adminUser, "Admin");
+                        _logger.LogInformation("Added Admin role to existing admin user");
+                    }
                 }
             }
             catch (Exception ex)

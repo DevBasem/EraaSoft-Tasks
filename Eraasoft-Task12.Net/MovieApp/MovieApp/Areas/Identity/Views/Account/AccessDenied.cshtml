@@ -7,34 +7,121 @@
         <h1>@ViewData["Title"]</h1>
     </div>
     
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card border-0 bg-transparent">
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
-                        <h3>You Don't Have Permission</h3>
-                        <p class="text-secondary">
-                            You don't have the necessary permissions to access this resource.
-                        </p>
+    <div class="access-denied-content">
+        <div class="text-center mb-4">
+            <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+            <h3>You Don't Have Permission</h3>
+            <p class="text-secondary">
+                You don't have the necessary permissions to access this resource.
+            </p>
+        </div>
+        
+        <div class="identity-info mb-4">
+            <p class="text-secondary">
+                If you believe you should have access to this page, please contact the administrator or try logging in with a different account.
+            </p>
+        </div>
+        
+        <div class="admin-credentials-card mb-4">
+            <div class="admin-credentials-header">
+                <i class="fas fa-info-circle me-2"></i>
+                Educational Use Only
+            </div>
+            <div class="admin-credentials-body">
+                <p class="text-secondary mb-3">This application is for educational purposes. For testing, you can use the super admin credentials:</p>
+                <div class="credentials-box">
+                    <div class="credential-row">
+                        <div class="credential-label">Email:</div>
+                        <div class="credential-value">admin@movieapp.com</div>
                     </div>
-                    
-                    <div class="identity-info">
-                        <p>
-                            If you believe you should have access to this page, please contact the administrator or try logging in with a different account.
-                        </p>
-                    </div>
-                    
-                    <div class="text-center mt-4">
-                        <a asp-area="Public" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary-custom me-2">
-                            <i class="fas fa-home me-2"></i>Return to Home
-                        </a>
-                        <a asp-area="Identity" asp-controller="Account" asp-action="Login" class="btn btn-primary-custom">
-                            <i class="fas fa-sign-in-alt me-2"></i>Log in
-                        </a>
+                    <div class="credential-row">
+                        <div class="credential-label">Password:</div>
+                        <div class="credential-value">Admin@123</div>
                     </div>
                 </div>
             </div>
         </div>
+        
+        <div class="text-center">
+            <a asp-area="Public" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary-custom me-3">
+                <i class="fas fa-home me-2"></i>Return to Home
+            </a>
+            <a asp-area="Identity" asp-controller="Account" asp-action="Login" class="identity-btn">
+                <i class="fas fa-sign-in-alt me-2"></i>Log in
+            </a>
+        </div>
     </div>
 </div>
+
+<style>
+    .access-denied-content {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .admin-credentials-card {
+        border-radius: var(--border-radius);
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+    }
+    
+    .admin-credentials-header {
+        padding: 15px;
+        font-weight: 600;
+        color: var(--text-light);
+        background-color: rgba(10, 132, 255, 0.1);
+        border-bottom: 1px solid rgba(10, 132, 255, 0.2);
+    }
+    
+    .admin-credentials-header i {
+        color: var(--primary-color);
+    }
+    
+    .admin-credentials-body {
+        padding: 15px;
+    }
+    
+    .credentials-box {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: var(--border-radius);
+        padding: 15px;
+        border: 1px solid var(--border-color);
+    }
+    
+    .credential-row {
+        display: flex;
+        margin-bottom: 10px;
+    }
+    
+    .credential-row:last-child {
+        margin-bottom: 0;
+    }
+    
+    .credential-label {
+        font-weight: 600;
+        width: 80px;
+        color: var(--text-secondary);
+    }
+    
+    .credential-value {
+        color: var(--primary-color);
+        font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        background-color: rgba(10, 132, 255, 0.1);
+        padding: 2px 8px;
+        border-radius: 4px;
+        flex-grow: 1;
+    }
+    
+    .text-secondary {
+        color: var(--text-secondary) !important;
+    }
+    
+    h3 {
+        color: var(--text-light);
+    }
+    
+    .text-warning {
+        color: var(--warning-color) !important;
+    }
+</style>

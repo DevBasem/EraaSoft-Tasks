@@ -18,16 +18,29 @@
     <div class="row">
         <div class="col-md-4">
             <div class="list-group mb-4 identity-nav">
-                <a class="list-group-item list-group-item-action active" asp-controller="Manage" asp-action="Index">
+                <a class="list-group-item list-group-item-action active" asp-area="Identity" asp-controller="Manage" asp-action="Index">
                     <i class="fas fa-user me-2"></i>Profile
                 </a>
-                <a class="list-group-item list-group-item-action" asp-controller="Manage" asp-action="ChangePassword">
+                <a class="list-group-item list-group-item-action @(Model.IsSuperAdmin ? "disabled text-muted" : "")" asp-area="Identity" asp-controller="Manage" asp-action="ChangePassword">
                     <i class="fas fa-key me-2"></i>Password
+                    @if (Model.IsSuperAdmin)
+                    {
+                        <span><i class="fas fa-lock ms-2" title="Locked for security"></i></span>
+                    }
                 </a>
             </div>
+            
+            @if (Model.IsSuperAdmin)
+            {
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    <strong>Super Admin Account</strong>
+                    <p class="mt-2 mb-0 small">For security reasons, the super admin password cannot be changed through the user interface.</p>
+                </div>
+            }
         </div>
         <div class="col-md-8">
-            <form asp-controller="Manage" asp-action="Index" method="post" class="identity-form">
+            <form asp-area="Identity" asp-controller="Manage" asp-action="Index" method="post" class="identity-form">
                 <h4>Your profile information</h4>
                 <hr />
                 <div asp-validation-summary="All" class="text-danger"></div>
@@ -76,6 +89,9 @@
                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                 </div>
                 
+                <!-- Hidden field to preserve the IsSuperAdmin value -->
+                <input type="hidden" asp-for="IsSuperAdmin" />
+                
                 <button type="submit" class="identity-btn">Save</button>
             </form>
         </div>
@@ -92,7 +108,7 @@
         transition: all 0.3s ease;
     }
     
-    .identity-nav .list-group-item:hover {
+    .identity-nav .list-group-item:hover:not(.disabled) {
         background-color: rgba(255,255,255,0.08);
         color: var(--text-light);
     }
@@ -101,6 +117,11 @@
         background: var(--primary-color);
         color: white;
         border-color: var(--primary-color);
+    }
+    
+    .identity-nav .list-group-item.disabled {
+        pointer-events: none;
+        opacity: 0.6;
     }
     
     .input-group-text {

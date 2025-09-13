@@ -1,0 +1,248 @@
+@{
+    ViewData["Title"] = "Admin - Page Not Found";
+    int statusCode = ViewBag.StatusCode ?? 404;
+    string errorMessage = ViewBag.ErrorMessage ?? "The admin page you are looking for could not be found";
+}
+
+<div class="admin-error-container">
+    <div class="admin-error-content">
+        <!-- Admin Error Icon -->
+        <div class="admin-error-icon">
+            <i class="fas fa-shield-alt"></i>
+            <div class="error-code">@statusCode</div>
+        </div>
+        
+        <div class="admin-error-message">
+            <h1>Admin Resource Not Found</h1>
+            <p class="error-description">@errorMessage</p>
+            <p class="error-subtitle">
+                The requested admin resource could not be located. Please check the URL or navigate using the admin menu.
+            </p>
+        </div>
+        
+        <!-- Admin Action Buttons -->
+        <div class="admin-error-actions">
+            <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })" class="btn btn-admin-primary">
+                <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+            </a>
+            <button onclick="history.back()" class="btn btn-admin-outline">
+                <i class="fas fa-arrow-left me-2"></i>Go Back
+            </button>
+        </div>
+        
+        <!-- Admin Quick Links -->
+        <div class="admin-quick-links">
+            <h3><i class="fas fa-cog me-2"></i>Quick Admin Links</h3>
+            <div class="admin-links">
+                <a href="@Url.Action("Index", "Movies", new { area = "Admin" })" class="admin-link">
+                    <i class="fas fa-film me-1"></i>Manage Movies
+                </a>
+                <a href="@Url.Action("Index", "Categories", new { area = "Admin" })" class="admin-link">
+                    <i class="fas fa-list me-1"></i>Manage Categories
+                </a>
+                <a href="@Url.Action("Index", "Users", new { area = "Admin" })" class="admin-link">
+                    <i class="fas fa-users me-1"></i>Manage Users
+                </a>
+                <a href="@Url.Action("Index", "Actors", new { area = "Admin" })" class="admin-link">
+                    <i class="fas fa-user-tie me-1"></i>Manage Actors
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-error-container {
+        min-height: calc(100vh - 120px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        color: var(--text-light);
+        padding: 80px 20px 40px 20px; /* Increased top padding for navbar */
+        border-radius: var(--border-radius);
+        margin: 20px;
+    }
+    
+    .admin-error-content {
+        text-align: center;
+        max-width: 600px;
+    }
+    
+    /* Admin Error Icon */
+    .admin-error-icon {
+        position: relative;
+        margin: 30px 0;
+    }
+    
+    .admin-error-icon .fas {
+        font-size: 6rem;
+        color: #dc3545;
+        animation: adminPulse 2s ease-in-out infinite;
+    }
+    
+    .error-code {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2rem;
+        font-weight: bold;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    }
+    
+    @@keyframes adminPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    
+    /* Admin Error Message */
+    .admin-error-message h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        background: linear-gradient(45deg, #dc3545, #ff6b6b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .error-description {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+    }
+    
+    .error-subtitle {
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+    
+    /* Admin Action Buttons */
+    .admin-error-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+    }
+    
+    .btn-admin-primary {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-admin-primary:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-admin-outline {
+        background: transparent;
+        color: #dc3545;
+        border: 2px solid #dc3545;
+        padding: 10px 25px;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-admin-outline:hover {
+        background: #dc3545;
+        color: white;
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+    
+    /* Admin Quick Links */
+    .admin-quick-links {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: var(--border-radius);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+    
+    .admin-quick-links h3 {
+        color: var(--text-light);
+        margin-bottom: 20px;
+        font-size: 1.3rem;
+    }
+    
+    .admin-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        justify-items: center;
+    }
+    
+    .admin-link {
+        color: #dc3545;
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+        transition: all 0.3s ease;
+        font-weight: 500;
+        text-align: center;
+        width: 100%;
+        max-width: 180px;
+    }
+    
+    .admin-link:hover {
+        background: rgba(220, 53, 69, 0.2);
+        color: #ff6b6b;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+    
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .admin-error-container {
+            padding: 100px 20px 40px 20px; /* Increased top padding for mobile navbar */
+            margin: 10px;
+        }
+        
+        .admin-error-message h1 {
+            font-size: 2rem;
+        }
+        
+        .admin-error-icon .fas {
+            font-size: 4rem;
+        }
+        
+        .error-code {
+            font-size: 1.5rem;
+        }
+        
+        .admin-error-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .btn-admin-primary,
+        .btn-admin-outline {
+            width: 200px;
+            justify-content: center;
+        }
+        
+        .admin-links {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

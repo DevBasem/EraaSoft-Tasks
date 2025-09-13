@@ -1,0 +1,96 @@
+@model UserEditViewModel
+@{
+    ViewData["Title"] = "Edit User";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-content-container">
+    <div class="admin-content-header">
+        <h1>@ViewData["Title"]</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb admin-breadcrumb">
+                <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a></li>
+                <li class="breadcrumb-item active">Edit User</li>
+            </ol>
+        </nav>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h5>Edit User Information</h5>
+                </div>
+                <div class="admin-card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="IsSuperAdmin" />
+                        
+                        <div class="admin-form-group">
+                            <label asp-for="Email" class="admin-form-label"></label>
+                            <input asp-for="Email" class="admin-form-control" disabled />
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label asp-for="FirstName" class="admin-form-label"></label>
+                            <input asp-for="FirstName" class="admin-form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label asp-for="LastName" class="admin-form-label"></label>
+                            <input asp-for="LastName" class="admin-form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label asp-for="PhoneNumber" class="admin-form-label"></label>
+                            <input asp-for="PhoneNumber" class="admin-form-control" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="admin-form-group form-check">
+                            <input asp-for="EmailConfirmed" class="form-check-input" />
+                            <label asp-for="EmailConfirmed" class="form-check-label"></label>
+                        </div>
+                        
+                        @if (!Model.IsSuperAdmin)
+                        {
+                            <div class="admin-form-group form-check">
+                                <input asp-for="IsAdmin" class="form-check-input" />
+                                <label asp-for="IsAdmin" class="form-check-label"></label>
+                            </div>
+                            
+                            <div class="admin-form-group form-check">
+                                <input asp-for="IsActive" class="form-check-input" />
+                                <label asp-for="IsActive" class="form-check-label"></label>
+                            </div>
+                        }
+                        else
+                        {
+                            <input type="hidden" asp-for="IsAdmin" value="true" />
+                            <input type="hidden" asp-for="IsActive" value="true" />
+                            
+                            <div class="alert alert-info my-3">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                <strong>Super Admin Account</strong>
+                                <p class="mb-0">This is a super admin account with protected status. Role and status cannot be modified.</p>
+                            </div>
+                        }
+                        
+                        <div class="admin-form-buttons">
+                            <button type="submit" class="admin-btn admin-btn-primary">Save Changes</button>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="admin-btn admin-btn-outline">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

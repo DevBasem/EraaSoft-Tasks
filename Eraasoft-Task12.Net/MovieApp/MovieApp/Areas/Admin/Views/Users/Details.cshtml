@@ -1,0 +1,190 @@
+@model UserDetailsViewModel
+@{
+    ViewData["Title"] = "User Details";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-content-container">
+    <div class="admin-content-header">
+        <h1>@ViewData["Title"]</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb admin-breadcrumb">
+                <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a></li>
+                <li class="breadcrumb-item active">User Details</li>
+            </ol>
+        </nav>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="admin-card mb-4">
+                <div class="admin-card-body text-center p-4">
+                    <div class="user-avatar-large mx-auto mb-3">
+                        @if (!string.IsNullOrEmpty(Model.FirstName) && !string.IsNullOrEmpty(Model.LastName))
+                        {
+                            @(Model.FirstName.Substring(0, 1) + Model.LastName.Substring(0, 1))
+                        }
+                        else
+                        {
+                            @(Model.Email.Substring(0, 1).ToUpper())
+                        }
+                    </div>
+                    <h4 class="mb-1">@(Model.FirstName + " " + Model.LastName)</h4>
+                    <p class="text-muted mb-3">@Model.Email</p>
+                    
+                    <div class="d-flex justify-content-center mb-3">
+                        @foreach (var role in Model.Roles)
+                        {
+                            <span class="admin-badge admin-badge-secondary me-2">@role</span>
+                        }
+                        
+                        @if (Model.IsSuperAdmin)
+                        {
+                            <span class="admin-badge admin-badge-danger">Super Admin</span>
+                        }
+                    </div>
+                    
+                    <div class="d-flex justify-content-center">
+                        @if (Model.IsActive)
+                        {
+                            <span class="admin-badge admin-badge-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="admin-badge admin-badge-warning">Inactive</span>
+                        }
+                    </div>
+                </div>
+            </div>
+            
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h5>Actions</h5>
+                </div>
+                <div class="admin-card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="admin-btn admin-btn-outline admin-btn-block">
+                            <i class="fas fa-edit me-2"></i>Edit User
+                        </a>
+                        
+                        @if (!Model.IsSuperAdmin)
+                        {
+                            <a asp-action="ResetPassword" asp-route-id="@Model.Id" class="admin-btn admin-btn-outline admin-btn-block">
+                                <i class="fas fa-key me-2"></i>Reset Password
+                            </a>
+                            
+                            <form asp-action="ToggleStatus" asp-route-id="@Model.Id" method="post">
+                                <button type="submit" class="admin-btn admin-btn-outline admin-btn-warning admin-btn-block"
+                                        onclick="return confirm('Are you sure you want to @(Model.IsActive ? "deactivate" : "activate") this user?')">
+                                    @if (Model.IsActive)
+                                    {
+                                        <i class="fas fa-user-slash me-2"></i>@:Deactivate User
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-user-check me-2"></i>@:Activate User
+                                    }
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info mt-3">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                Super Admin account has protected status for security reasons.
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h5>User Information</h5>
+                </div>
+                <div class="admin-card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">First Name</dt>
+                        <dd class="col-sm-9">@Model.FirstName</dd>
+                        
+                        <dt class="col-sm-3">Last Name</dt>
+                        <dd class="col-sm-9">@Model.LastName</dd>
+                        
+                        <dt class="col-sm-3">Email</dt>
+                        <dd class="col-sm-9">
+                            @Model.Email
+                            @if (Model.EmailConfirmed)
+                            {
+                                <span class="ms-2 text-success">
+                                    <i class="fas fa-check-circle"></i> Verified
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="ms-2 text-danger">
+                                    <i class="fas fa-times-circle"></i> Not Verified
+                                </span>
+                            }
+                        </dd>
+                        
+                        <dt class="col-sm-3">Phone Number</dt>
+                        <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "None" : Model.PhoneNumber)</dd>
+                        
+                        <dt class="col-sm-3">Created On</dt>
+                        <dd class="col-sm-9">@Model.CreatedOn.ToString("MMMM d, yyyy")</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .user-avatar-large {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: bold;
+    }
+    
+    .admin-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    
+    .admin-badge-success {
+        background-color: rgba(52, 199, 89, 0.2);
+        color: #34c759;
+    }
+    
+    .admin-badge-warning {
+        background-color: rgba(255, 149, 0, 0.2);
+        color: #ff9500;
+    }
+    
+    .admin-badge-danger {
+        background-color: rgba(255, 59, 48, 0.2);
+        color: #ff3b30;
+    }
+    
+    .admin-badge-secondary {
+        background-color: rgba(142, 142, 147, 0.2);
+        color: #8e8e93;
+    }
+    
+    dt {
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+</style>

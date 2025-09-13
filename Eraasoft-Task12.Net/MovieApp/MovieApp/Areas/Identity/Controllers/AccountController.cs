@@ -40,6 +40,12 @@ namespace MovieApp.Areas.Identity.Controllers
         [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {
+            // If user is already authenticated, redirect to home page
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home", new { area = "Public" });
+            }
+
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -80,7 +86,9 @@ namespace MovieApp.Areas.Identity.Controllers
                         callbackUrl);
 
                     ToastNotification.Success(TempData, "Your account was created successfully. Please check your email for confirmation instructions.");
-                    return RedirectToAction("RegisterConfirmation", new { email = model.Email });
+                    
+                    // Fix: Explicitly specify the area to be "Identity" in the redirect
+                    return RedirectToAction("RegisterConfirmation", "Account", new { area = "Identity", email = model.Email });
                 }
 
                 foreach (var error in result.Errors)
@@ -141,6 +149,12 @@ namespace MovieApp.Areas.Identity.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(string returnUrl = null)
         {
+            // If user is already authenticated, redirect to home page
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home", new { area = "Public" });
+            }
+
             returnUrl ??= Url.Content("~/");
 
             // Clear the existing external cookie
@@ -174,7 +188,7 @@ namespace MovieApp.Areas.Identity.Controllers
                 else
                 {
                     ToastNotification.Error(TempData, "Email address is required to resend confirmation.");
-                    return RedirectToAction("Login");
+                    return RedirectToAction("Login", "Account", new { area = "Identity" });
                 }
             }
             
@@ -208,14 +222,14 @@ namespace MovieApp.Areas.Identity.Controllers
                 
                 if (result.RequiresTwoFactor)
                 {
-                    return RedirectToAction("LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    return RedirectToAction("LoginWith2fa", "Account", new { area = "Identity", ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 }
                 
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
                     ToastNotification.Error(TempData, "Your account has been locked out. Please try again later.");
-                    return RedirectToAction("Lockout");
+                    return RedirectToAction("Lockout", "Account", new { area = "Identity" });
                 }
                 else
                 {
@@ -232,7 +246,7 @@ namespace MovieApp.Areas.Identity.Controllers
             if (string.IsNullOrEmpty(email))
             {
                 ToastNotification.Error(TempData, "Email address is required.");
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
             }
             
             var user = await _userManager.FindByEmailAsync(email);
@@ -240,13 +254,13 @@ namespace MovieApp.Areas.Identity.Controllers
             {
                 // Don't reveal that the user doesn't exist
                 ToastNotification.Success(TempData, "If your email is registered, a confirmation link has been sent. Please check your inbox.");
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
             }
             
             if (await _userManager.IsEmailConfirmedAsync(user))
             {
                 ToastNotification.Info(TempData, "Your email is already confirmed. You can log in to your account.");
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
             }
             
             // Generate the confirmation code and send email
@@ -270,7 +284,7 @@ namespace MovieApp.Areas.Identity.Controllers
             TempData["RequiresEmailConfirmation"] = true;
             TempData["UserEmail"] = email;
             
-            return RedirectToAction("Login");
+            return RedirectToAction("Login", "Account", new { area = "Identity" });
         }
 
         [HttpPost]
@@ -287,6 +301,12 @@ namespace MovieApp.Areas.Identity.Controllers
         [AllowAnonymous]
         public IActionResult ForgotPassword()
         {
+            // If user is already authenticated, redirect to home page
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home", new { area = "Public" });
+            }
+
             return View();
         }
 
@@ -298,11 +318,39 @@ namespace MovieApp.Areas.Identity.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                
+                // Check if user exists
+                if (user == null)
                 {
-                    // Don't reveal that the user does not exist or is not confirmed
+                    // Don't reveal that the user does not exist
                     ToastNotification.Info(TempData, "If your email is registered and confirmed, you will receive a verification code.");
-                    return RedirectToAction("ForgotPasswordConfirmation");
+                    return RedirectToAction("ForgotPasswordConfirmation", "Account", new { area = "Identity" });
+                }
+
+                // Check if email is confirmed
+                if (!await _userManager.IsEmailConfirmedAsync(user))
+                {
+                    // If email is not confirmed, redirect to a special page where they can verify their email first
+                    TempData["UnverifiedEmail"] = model.Email;
+                    ToastNotification.Warning(TempData, "You need to verify your email address before you can reset your password.");
+                    
+                    // Send a new confirmation email
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var callbackUrl = Url.Action(
+                        "ConfirmEmail",
+                        "Account",
+                        values: new { area = "Identity", userId = user.Id, code = code },
+                        protocol: Request.Scheme);
+
+                    // Send the email with our template
+                    await _emailSender.SendEmailConfirmationAsync(
+                        user.Email,
+                        $"{user.FirstName} {user.LastName}",
+                        callbackUrl);
+                        
+                    // Redirect to a view that tells the user to verify their email first
+                    return View("VerifyEmailFirst", model.Email);
                 }
 
                 // Generate 4-digit OTP
@@ -333,7 +381,7 @@ namespace MovieApp.Areas.Identity.Controllers
                     $"{user.FirstName} {user.LastName}",
                     otpCode);
 
-                return RedirectToAction("VerifyOtp", new { email = model.Email });
+                return RedirectToAction("VerifyOtp", "Account", new { area = "Identity", email = model.Email });
             }
 
             return View(model);
@@ -350,9 +398,15 @@ namespace MovieApp.Areas.Identity.Controllers
         [AllowAnonymous]
         public IActionResult VerifyOtp(string email)
         {
+            // If user is already authenticated, redirect to home page
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home", new { area = "Public" });
+            }
+
             if (string.IsNullOrEmpty(email))
             {
-                return RedirectToAction("ForgotPassword");
+                return RedirectToAction("ForgotPassword", "Account", new { area = "Identity" });
             }
             
             var model = new VerifyOtpViewModel
@@ -412,7 +466,7 @@ namespace MovieApp.Areas.Identity.Controllers
             await _dbContext.SaveChangesAsync();
             
             ToastNotification.Success(TempData, "Your password has been reset successfully.");
-            return RedirectToAction("ResetPasswordConfirmation");
+            return RedirectToAction("ResetPasswordConfirmation", "Account", new { area = "Identity" });
         }
 
         [HttpGet]
