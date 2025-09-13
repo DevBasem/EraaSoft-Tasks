@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Register Confirmation";
+}
+
+<div class="identity-container">
+    <div class="identity-header">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 bg-transparent">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-envelope-open-text fa-4x text-primary-custom mb-3"></i>
+                        <h3>Check Your Email</h3>
+                        <p class="text-secondary">
+                            We've sent a confirmation link to your email address.
+                            Please check your inbox and click the link to activate your account.
+                        </p>
+                    </div>
+                    
+                    <div class="identity-info">
+                        <p>
+                            If you don't receive the email within a few minutes, please check your spam folder or 
+                            <a asp-area="Identity" asp-controller="Account" asp-action="Login">try to login</a>
+                            and follow the instructions to resend the confirmation email.
+                        </p>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a asp-area="Public" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary-custom">
+                            <i class="fas fa-home me-2"></i>Return to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+@using Microsoft.AspNetCore.Identity
+@using MovieApp.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var currentUser = SignInManager.IsSignedIn(User) ? UserManager.GetUserAsync(User).Result : null;
+    var userInitials = currentUser != null ? 
+        (string.IsNullOrEmpty(currentUser.FirstName) ? "" : currentUser.FirstName[0].ToString()) + 
+        (string.IsNullOrEmpty(currentUser.LastName) ? "" : currentUser.LastName[0].ToString()) : "";
+}
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <!-- User Avatar Dropdown -->
+    <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle p-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="user-avatar-circle">@userInitials</div>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg border-0" aria-labelledby="userDropdown">
+            <li>
+                <div class="px-3 py-2 text-center mb-2">
+                    <div class="user-avatar-circle mx-auto mb-2">@userInitials</div>
+                    <div class="fw-bold text-light">@currentUser.FirstName @currentUser.LastName</div>
+                    <div class="small text-light opacity-75">@currentUser.Email</div>
+                </div>
+            </li>
+            <li><hr class="dropdown-divider border-secondary"></li>
+            <li><a class="dropdown-item py-2 text-light" asp-area="Identity" asp-controller="Manage" asp-action="Index"><i class="fas fa-user me-2 text-primary"></i>My Profile</a></li>
+            @if (User.IsInRole("Admin"))
+            {
+                <li><a class="dropdown-item py-2 text-light" asp-area="Admin" asp-controller="Dashboard" asp-action="Index"><i class="fas fa-tachometer-alt me-2 text-danger"></i>Admin Dashboard</a></li>
+            }
+            <li><hr class="dropdown-divider border-secondary"></li>
+            <li>
+                <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="dropdown-item py-2 text-light"><i class="fas fa-sign-out-alt me-2 text-secondary"></i>Logout</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+}
+else
+{
+    <!-- Login/Register Buttons -->
+    <div class="auth-buttons">
+        <a class="btn btn-sm btn-outline-light me-2" asp-area="Identity" asp-controller="Account" asp-action="Login">
+            <i class="fas fa-sign-in-alt me-1 d-none d-sm-inline-block"></i>Login
+        </a>
+        <a class="btn btn-sm btn-primary" asp-area="Identity" asp-controller="Account" asp-action="Register">
+            <i class="fas fa-user-plus me-1 d-none d-sm-inline-block"></i>Register
+        </a>
+    </div>
+}

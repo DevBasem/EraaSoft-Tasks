@@ -1,68 +1,38 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MovieApp.DataAccess;
-using MovieApp.Models;
+using MovieApp.Areas.Admin;
+using MovieApp.Services.Interfaces;
 using MovieApp.Utilities;
 using MovieApp.ViewModels.Admin;
-using System.Linq;
+using System;
 using System.Threading.Tasks;
 
 namespace MovieApp.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [AdminAreaAttribute]
     public class CategoriesController : Controller
     {
-        private readonly MoviesDbContext _context;
+        private readonly ICategoryService _categoryService;
 
-        public CategoriesController(MoviesDbContext context)
+        public CategoriesController(ICategoryService categoryService)
         {
-            _context = context;
+            _categoryService = categoryService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var categories = await _context.Categories
-                .Include(c => c.Movies)
-                .Select(c => new CategoryVM
-                {
-                    Id = c.Id,
-                    Name = c.Name,
-                    Description = c.Description,
-                    MovieCount = c.Movies.Count()
-                })
-                .OrderBy(c => c.Name)
-                .ToListAsync();
-
-            return View(categories);
+            var viewModels = await _categoryService.GetAllCategoriesAsync();
+            return View(viewModels);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var category = await _context.Categories
-                .Include(c => c.Movies)
-                    .ThenInclude(m => m.Cinema)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var viewModel = await _categoryService.GetCategoryDetailsAsync(id);
 
-            if (category == null)
+            if (viewModel == null)
             {
                 ToastNotification.Error(TempData, "Category not found");
                 return NotFound();
             }
-
-            var viewModel = new CategoryVM
-            {
-                Id = category.Id,
-                Name = category.Name,
-                Description = category.Description,
-                MovieCount = category.Movies.Count(),
-                Movies = category.Movies.Select(m => new MovieItemVM
-                {
-                    Id = m.Id,
-                    Title = m.Title,
-                    ReleaseYear = m.ReleaseYear,
-                    Status = m.Status
-                }).ToList()
-            };
 
             return View(viewModel);
         }
@@ -78,15 +48,7 @@ namespace MovieApp.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var category = new Category
-                {
-                    Name = viewModel.Name,
-                    Description = viewModel.Description
-                };
-
-                _context.Categories.Add(category);
-                await _context.SaveChangesAsync();
-                
+                var category = await _categoryService.CreateCategoryAsync(viewModel);
                 ToastNotification.Success(TempData, $"Category '{category.Name}' was created successfully");
                 return RedirectToAction(nameof(Index));
             }
@@ -97,7 +59,7 @@ namespace MovieApp.Areas.Admin.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _categoryService.GetCategoryByIdAsync(id);
 
             if (category == null)
             {
@@ -129,7 +91,7 @@ namespace MovieApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    var category = await _context.Categories.FindAsync(id);
+                    var category = await _categoryService.UpdateCategoryAsync(id, viewModel);
 
                     if (category == null)
                     {
@@ -137,17 +99,11 @@ namespace MovieApp.Areas.Admin.Controllers
                         return NotFound();
                     }
 
-                    category.Name = viewModel.Name;
-                    category.Description = viewModel.Description;
-
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
-                    
                     ToastNotification.Success(TempData, $"Category '{category.Name}' was updated successfully");
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
-                    if (!CategoryExists(viewModel.Id))
+                    if (!await _categoryService.CategoryExistsAsync(viewModel.Id))
                     {
                         ToastNotification.Error(TempData, "Category not found");
                         return NotFound();
@@ -167,23 +123,13 @@ namespace MovieApp.Areas.Admin.Controllers
 
         public async Task<IActionResult> Delete(int id)
         {
-            var category = await _context.Categories
-                .Include(c => c.Movies)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var viewModel = await _categoryService.GetCategoryDetailsAsync(id);
 
-            if (category == null)
+            if (viewModel == null)
             {
                 ToastNotification.Error(TempData, "Category not found");
                 return NotFound();
             }
-
-            var viewModel = new CategoryVM
-            {
-                Id = category.Id,
-                Name = category.Name,
-                Description = category.Description,
-                MovieCount = category.Movies.Count()
-            };
 
             return View(viewModel);
         }
@@ -192,13 +138,12 @@ namespace MovieApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _categoryService.GetCategoryByIdAsync(id);
             
             if (category != null)
             {
                 var categoryName = category.Name;
-                _context.Categories.Remove(category);
-                await _context.SaveChangesAsync();
+                await _categoryService.DeleteCategoryAsync(id);
                 ToastNotification.Success(TempData, $"Category '{categoryName}' was deleted successfully");
             }
             else
@@ -207,11 +152,6 @@ namespace MovieApp.Areas.Admin.Controllers
             }
 
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool CategoryExists(int id)
-        {
-            return _context.Categories.Any(e => e.Id == id);
         }
     }
 }

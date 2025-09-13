@@ -1,0 +1,647 @@
+/* Identity Pages Styles */
+.identity-container {
+    max-width: 900px;
+    margin: 120px auto 60px auto;
+    padding: 30px;
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-medium);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    background-image: var(--gradient-card);
+    color: var(--text-light);
+}
+
+.identity-header {
+    margin-bottom: 30px;
+    text-align: center;
+    position: relative;
+}
+
+.identity-header h1 {
+    color: var(--text-light);
+}
+
+.identity-header::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: var(--gradient-primary);
+}
+
+.identity-form {
+    margin-top: 20px;
+}
+
+.identity-form h4 {
+    color: var(--text-light);
+}
+
+.identity-form .form-group {
+    margin-bottom: 20px;
+}
+
+.identity-form .form-label {
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: var(--text-secondary);
+}
+
+.identity-form .form-control {
+    border-radius: var(--border-radius);
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    background: rgba(255,255,255,0.05);
+    color: var(--text-light);
+    transition: all 0.3s;
+}
+
+.identity-form .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(10, 132, 255, 0.25);
+    background: rgba(255,255,255,0.08);
+}
+
+.identity-form .form-control::placeholder {
+    color: var(--text-gray);
+}
+
+.identity-btn {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    transition: all 0.3s;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    box-shadow: var(--shadow-light);
+}
+
+.identity-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.identity-links {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.identity-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.identity-links a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.validation-summary-errors {
+    color: var(--danger-color);
+    padding: 10px;
+    border-radius: var(--border-radius);
+    background-color: rgba(255, 69, 58, 0.1);
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 69, 58, 0.3);
+}
+
+.validation-summary-errors ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.field-validation-error {
+    font-size: 0.875rem;
+    display: block;
+    margin-top: 5px;
+    color: var(--danger-color);
+}
+
+.text-danger {
+    color: var(--danger-color) !important;
+}
+
+.external-auth {
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+    margin-top: 30px;
+}
+
+.external-auth h4 {
+    color: var(--text-light);
+}
+
+.social-btn {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    padding: 8px 15px;
+    color: white;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.social-btn i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.facebook-btn {
+    background-color: #3b5998;
+}
+
+.google-btn {
+    background-color: #dd4b39;
+}
+
+.twitter-btn {
+    background-color: #1da1f2;
+}
+
+.social-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+    color: white;
+}
+
+.auth-separator {
+    position: relative;
+    text-align: center;
+    margin: 25px 0;
+}
+
+.auth-separator span {
+    background-color: var(--background-elev-1);
+    padding: 0 15px;
+    position: relative;
+    z-index: 1;
+    color: var(--text-secondary);
+}
+
+.auth-separator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--border-color);
+}
+
+.identity-info {
+    background-color: rgba(10, 132, 255, 0.1);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    border: 1px solid rgba(10, 132, 255, 0.2);
+}
+
+.identity-info p {
+    margin-bottom: 0;
+    color: var(--text-secondary);
+}
+
+.identity-info a {
+    color: var(--primary-color);
+}
+
+/* Custom form check styles */
+.form-check-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check-label {
+    color: var(--text-secondary);
+}
+
+/* Feature highlights in identity pages */
+.identity-features .fas,
+.external-auth .fas {
+    color: var(--primary-color);
+}
+
+.identity-features h5,
+.external-auth h5 {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+.identity-features p,
+.external-auth p.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+/* Handle dark mode text */
+.identity-form input:-webkit-autofill,
+.identity-form input:-webkit-autofill:hover,
+.identity-form input:-webkit-autofill:focus,
+.identity-form textarea:-webkit-autofill,
+.identity-form textarea:-webkit-autofill:hover,
+.identity-form textarea:-webkit-autofill:focus,
+.identity-form select:-webkit-autofill,
+.identity-form select:-webkit-autofill:hover,
+.identity-form select:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text-light);
+    -webkit-box-shadow: 0 0 0px 1000px rgba(30, 30, 30, 0.8) inset;
+    box-shadow: 0 0 0px 1000px rgba(30, 30, 30, 0.8) inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Fix autofill styling */
+.identity-form input:-webkit-autofill::first-line {
+    font-size: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-light);
+}
+
+/* Ensure login/register pages work with dark nav */
+.identity-container {
+    margin-top: calc(var(--nav-height) + 50px);
+    position: relative;
+    z-index: 1;
+}
+
+/* Identity navigation menu */
+.identity-nav .list-group-item {
+    background-color: rgba(255,255,255,0.05);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    margin-bottom: 5px;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.identity-nav .list-group-item:hover {
+    background-color: rgba(255,255,255,0.08);
+    color: var(--text-light);
+}
+
+.identity-nav .list-group-item.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Input groups */
+.input-group-text {
+    background-color: rgba(255,255,255,0.05);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.border-success {
+    border-color: var(--success-color) !important;
+}
+
+.border-danger {
+    border-color: var(--danger-color) !important;
+}
+
+.border-start-0 {
+    border-left: 0 !important;
+}
+
+.border-end-0 {
+    border-right: 0 !important;
+}
+
+/* Alert styling */
+.alert-success {
+    background-color: rgba(48,209,88,0.12) !important;
+    color: var(--success-color) !important;
+    border: 1px solid rgba(48,209,88,0.3) !important;
+    border-radius: var(--border-radius) !important;
+}
+
+.alert-danger {
+    background-color: rgba(255,69,58,0.12) !important;
+    color: var(--danger-color) !important;
+    border: 1px solid rgba(255,69,58,0.3) !important;
+    border-radius: var(--border-radius) !important;
+}
+
+.alert-warning {
+    background-color: rgba(255,214,10,0.12) !important;
+    color: var(--warning-color) !important;
+    border: 1px solid rgba(255,214,10,0.3) !important;
+    border-radius: var(--border-radius) !important;
+}
+
+/* Button links within identity pages */
+.btn-link {
+    color: var(--primary-color) !important;
+    text-decoration: none !important;
+}
+
+.btn-link:hover {
+    text-decoration: underline !important;
+}
+
+/* Large icon styling */
+.fa-4x {
+    font-size: 4rem;
+}
+
+.text-primary-custom {
+    color: var(--primary-color) !important;
+}
+
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+.text-success {
+    color: var(--success-color) !important;
+}
+
+.text-danger {
+    color: var(--danger-color) !important;
+}
+
+.text-warning {
+    color: var(--warning-color) !important;
+}
+
+/* Toast Notifications for Identity Area */
+.toast-container {
+    z-index: 9999 !important;
+}
+
+.toast-dark {
+    background-color: var(--background-elev-1);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-medium);
+    opacity: 1 !important;
+}
+
+.toast-dark .toast-header {
+    border-bottom: 1px solid var(--border-color);
+    border-top-left-radius: calc(var(--border-radius) - 1px);
+    border-top-right-radius: calc(var(--border-radius) - 1px);
+}
+
+.toast-dark .toast-body {
+    color: var(--text-light);
+}
+
+/* Bottom right toast position */
+.position-fixed.bottom-0.end-0 {
+    bottom: 20px !important;
+    right: 20px !important;
+}
+
+/* Email confirmation section */
+.email-confirmation-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Email verification alert */
+.email-verification-alert {
+    border-left: 3px solid var(--warning-color);
+    padding: 12px 16px;
+    background-color: rgba(255, 214, 10, 0.08);
+    border-radius: 4px;
+    margin-bottom: 16px;
+}
+
+.verification-icon {
+    background-color: rgba(255, 214, 10, 0.2);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.verification-icon i {
+    color: var(--warning-color);
+    font-size: 14px;
+}
+
+.verification-content {
+    font-size: 14px;
+}
+
+.verification-content p {
+    color: var(--text-light);
+    margin-bottom: 5px;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0;
+    cursor: pointer;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+    color: var(--primary-dark);
+}
+
+/* OTP Input Styling */
+.otp-field {
+    flex-direction: row;
+    column-gap: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 30px auto;
+    max-width: 380px;
+}
+
+.otp-field input {
+    height: 60px;
+    width: 60px;
+    border-radius: 8px;
+    outline: none;
+    font-size: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-elev-1);
+    color: var(--text-light);
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.otp-field input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.otp-field input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.otp-field input::-webkit-inner-spin-button,
+.otp-field input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+.otp-field input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.resend {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.resend a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.resend a:hover {
+    text-decoration: underline;
+    color: var(--primary-dark);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .identity-container {
+        margin-top: calc(var(--nav-height) + 30px);
+        padding: 20px;
+        width: 90%;
+    }
+    
+    .toast-container {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 576px) {
+    .identity-container {
+        margin-top: calc(var(--nav-height) + 20px);
+        padding: 15px;
+        width: 95%;
+    }
+}
+
+/* User avatar styling */
+.user-avatar-circle {
+    width: 34px;
+    height: 34px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+/* Make avatar slightly larger in the dropdown header */
+.dropdown-menu .user-avatar-circle {
+    width: 48px;
+    height: 48px;
+    font-size: 1.1rem;
+}
+
+/* User menu styling */
+.dropdown-menu-dark {
+    background-color: var(--background-dark);
+    border-color: var(--border-color);
+}
+
+.dropdown-item:hover, 
+.dropdown-item:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-divider.border-secondary {
+    opacity: 0.2;
+}
+
+/* Mobile menu fixes */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background-color: var(--background-dark);
+        border-radius: 0 0 10px 10px;
+        padding: 15px;
+        margin: 0 -12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Better responsive layout for auth buttons */
+    .auth-buttons {
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Ensure dropdown appears in correct position */
+    .dropdown-menu {
+        position: absolute;
+        right: 0;
+        left: auto;
+    }
+    
+    /* Fix the avatar dropdown on mobile */
+    .nav-item.dropdown {
+        position: static;
+    }
+    
+    .nav-item.dropdown .dropdown-menu {
+        width: auto;
+        max-width: 280px;
+        right: 10px;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 575.98px) {
+    /* Make buttons a bit smaller on very small screens */
+    .auth-buttons .btn-sm {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Adjust user avatar for better visibility on very small screens */
+    .user-avatar-circle {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+}

@@ -1,0 +1,40 @@
+@{
+    Layout = "~/Views/EmailTemplates/_EmailLayout.cshtml";
+    ViewData["Title"] = "Email Confirmation";
+}
+
+<h2 style="color: #0a84ff; margin-bottom: 20px;">Confirm Your Email Address</h2>
+
+<p>Hello @Model.Name,</p>
+
+<p>Thank you for registering with MovieApp! We're excited to have you join our community of movie enthusiasts.</p>
+
+<p>Please click the button below to confirm your email address and activate your account:</p>
+
+<div style="text-align: center; margin: 25px 0;">
+    <a href="@Model.ConfirmationLink" class="btn">Confirm My Email</a>
+</div>
+
+<p>If the button doesn't work, you can also copy and paste the following link into your browser:</p>
+
+<p style="background-color: #212121; padding: 10px; border-radius: 4px; word-break: break-all;">
+    <a href="@Model.ConfirmationLink" style="color: #0a84ff;">@Model.ConfirmationLink</a>
+</p>
+
+<div class="important-note">
+    <p><strong>Note:</strong> This link will expire in 24 hours for security reasons.</p>
+</div>
+
+<div class="divider"></div>
+
+<p>Once your email is confirmed, you'll be able to:</p>
+<ul style="color: #e1e1e1; padding-left: 20px;">
+    <li>Book tickets for the latest movies</li>
+    <li>Save your favorite movies and create watchlists</li>
+    <li>Receive notifications about new releases and special offers</li>
+    <li>Write and share reviews with other movie fans</li>
+</ul>
+
+<p>We're looking forward to enhancing your movie experience!</p>
+
+<p>Enjoy the show,<br>The MovieApp Team</p>

@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Account Locked";
+}
+
+<div class="identity-container">
+    <div class="identity-header">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 bg-transparent">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-lock fa-4x text-danger mb-3"></i>
+                        <h3>Your Account is Temporarily Locked</h3>
+                        <p class="text-secondary">
+                            For your security, we've temporarily locked your account due to multiple unsuccessful login attempts.
+                        </p>
+                    </div>
+                    
+                    <div class="identity-info">
+                        <p>
+                            Please wait a few minutes before trying to log in again. If you continue to have trouble, you can 
+                            <a asp-area="Identity" asp-controller="Account" asp-action="ForgotPassword">reset your password</a> or contact customer support.
+                        </p>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a asp-area="Public" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary-custom">
+                            <i class="fas fa-home me-2"></i>Return to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

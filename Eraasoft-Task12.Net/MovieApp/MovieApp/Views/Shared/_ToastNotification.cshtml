@@ -1,0 +1,80 @@
+@if (TempData["ToastMessage"] != null)
+{
+    string type = TempData["ToastType"]?.ToString() ?? "info";
+    string title = TempData["ToastTitle"]?.ToString() ?? "Notification";
+    string message = TempData["ToastMessage"].ToString();
+    string iconClass = "fas fa-info-circle";
+    
+    switch(type.ToLower())
+    {
+        case "success":
+            iconClass = "fas fa-check-circle";
+            break;
+        case "danger":
+        case "error":
+            iconClass = "fas fa-exclamation-circle";
+            type = "danger";
+            break;
+        case "warning":
+            iconClass = "fas fa-exclamation-triangle";
+            break;
+        default:
+            iconClass = "fas fa-info-circle";
+            break;
+    }
+    
+    <div id="toast-notification" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999; margin-bottom: 20px;">
+        <div class="toast toast-dark show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-@type text-white">
+                <i class="@iconClass me-2"></i>
+                <strong class="me-auto">@title</strong>
+                <small>Just now</small>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" style="background: var(--background-elev-1); color: var(--text-light);">
+                @message
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toast = document.querySelector('.toast');
+            if (toast && typeof bootstrap !== 'undefined') {
+                const bsToast = new bootstrap.Toast(toast, {
+                    delay: 5000,
+                    autohide: true
+                });
+                bsToast.show();
+                
+                // Add a slide-in animation from the bottom
+                const toastEl = document.getElementById('toast-notification');
+                if (toastEl) {
+                    // Start offscreen below
+                    toastEl.style.transform = 'translateY(100%)';
+                    toastEl.style.opacity = '0';
+                    toastEl.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+                    
+                    // Animate in after a small delay
+                    setTimeout(() => {
+                        toastEl.style.transform = 'translateY(0)';
+                        toastEl.style.opacity = '1';
+                    }, 10);
+                    
+                    // Auto-hide after 5 seconds as a fallback
+                    setTimeout(() => {
+                        if (toastEl) {
+                            toastEl.style.opacity = '0';
+                            toastEl.style.transform = 'translateY(100%)';
+                            setTimeout(() => {
+                                if (toastEl.parentNode) {
+                                    toastEl.parentNode.removeChild(toastEl);
+                                }
+                            }, 300);
+                        }
+                    }, 5000);
+                }
+            }
+        });
+    </script>
+}

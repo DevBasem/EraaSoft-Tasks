@@ -1,0 +1,4 @@
+/* Remove dropdown arrow for user avatar */
+.nav-item.dropdown .dropdown-toggle::after {
+    display: none !important; /* Hide the dropdown arrow */
+}

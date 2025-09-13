@@ -1,23 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MovieApp.Models;
 
 namespace MovieApp.DataAccess
 {
-    public class MoviesDbContext : DbContext
+    public class MoviesDbContext : IdentityDbContext<ApplicationUser>
     {
+        public MoviesDbContext(DbContextOptions<MoviesDbContext> options) : base(options)
+        {
+        }
+
         public DbSet<Movie> Movies => Set<Movie>();
         public DbSet<Actor> Actors => Set<Actor>();
         public DbSet<Cinema> Cinemas => Set<Cinema>();
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<MovieActor> MovieActors => Set<MovieActor>();
         public DbSet<MovieImage> MovieImages => Set<MovieImage>();
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-
-            optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=MovieApp;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;");
-        }
+        public DbSet<PasswordResetOtp> PasswordResetOtps => Set<PasswordResetOtp>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -132,6 +131,24 @@ namespace MovieApp.DataAccess
 
                 entity.Property(c => c.Email)
                       .HasMaxLength(150);
+            });
+            
+            modelBuilder.Entity<PasswordResetOtp>(entity =>
+            {
+                entity.Property(o => o.UserId)
+                      .IsRequired()
+                      .HasMaxLength(450);
+                      
+                entity.Property(o => o.Email)
+                      .IsRequired()
+                      .HasMaxLength(256);
+                      
+                entity.Property(o => o.OtpCode)
+                      .IsRequired()
+                      .HasMaxLength(6);
+                      
+                entity.HasIndex(o => o.OtpCode);
+                entity.HasIndex(o => o.Email);
             });
         }
     }
